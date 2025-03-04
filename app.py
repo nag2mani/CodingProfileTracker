@@ -1,4 +1,5 @@
 import bcrypt
+import requests
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, render_template, redirect, session, flash
 
@@ -29,6 +30,14 @@ class User(db.Model):
 
 with app.app_context():
     db.create_all()
+
+def get_leetcode_data(username):
+    url = f"https://leetcode-stats-api.herokuapp.com/{username}"
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        return response.json()
+    return None
 
 @app.route('/')
 def index():
@@ -79,8 +88,13 @@ def dashboard():
         return redirect('/login')
     
     user = User.query.filter_by(email=session['email']).first()
-    print(vars(user))
-    return render_template('dashboard.html', user=user)
+    leetcode_data = None
+    
+    if user.leetcode:
+        username = user.leetcode.split("/")[-2]  # Extract LeetCode username from URL
+        leetcode_data = get_leetcode_data(username)
+    
+    return render_template('dashboard.html', user=user, leetcode_data=leetcode_data)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
