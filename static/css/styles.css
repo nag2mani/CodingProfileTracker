@@ -1,0 +1,99 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+}
+
+/* Container */
+.container {
+    display: flex;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #fff;
+    padding: 20px;
+    height: 100vh;
+    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+}
+.sidebar h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar nav ul li {
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.sidebar nav ul li i {
+    margin-right: 10px;
+}
+.sidebar nav ul li.active {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Main Dashboard */
+.dashboard {
+    flex: 1;
+    padding: 20px;
+}
+.dashboard header h1 {
+    margin: 0;
+    font-size: 26px;
+}
+.dashboard .stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+.dashboard .card {
+    background: white;
+    padding: 20px;
+    flex: 1;
+    margin: 0 10px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Heatmap */
+.heatmap .tags {
+    display: flex;
+    gap: 10px;
+}
+.heatmap .tags span {
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+.strong { background-color: #4CAF50; color: white; }
+.average { background-color: #FFC107; color: white; }
+.weak { background-color: #F44336; color: white; }
+
+/* Recommended Problems */
+.recommended ul {
+    list-style: none;
+    padding: 0;
+}
+.recommended ul li {
+    background: white;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+.easy { color: #4CAF50; }
+.medium { color: #FFC107; }
+.hard { color: #F44336; }
