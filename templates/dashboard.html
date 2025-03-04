@@ -1,13 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
-    <h2>Welcome, {{ user.name }}</h2>
-    <p>Email: {{ user.email }}</p>
-    <p>Role: {{ user.role }}</p>
-    <a href="/edit_profile">Edit Profile</a>
-    <a href="/logout">Logout</a>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>DSA Master</h2>
+            <nav>
+                <ul>
+                    <li class="active"><i class="fas fa-chart-line"></i> Dashboard</li>
+                    <li><i class="fas fa-trophy"></i> Leaderboard</li>
+                    <li><i class="fas fa-book"></i> Study Plan</li>
+                    <li><i class="fas fa-brain"></i> AI Insights</li>
+                    <li><i class="fas fa-code"></i> Mock Interview</li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="dashboard">
+            <header>
+                <h1>Welcome back, Alex!</h1>
+                <p>Keep up the great progress</p>
+            </header>
+            <section class="stats">
+                <div class="card">
+                    <h3>DSA Score</h3>
+                    <p>78/100</p>
+                </div>
+                <div class="card">
+                    <h3>Problems Solved</h3>
+                    <p>156</p>
+                </div>
+                <div class="card">
+                    <h3>Current Streak</h3>
+                    <p>12 days</p>
+                </div>
+                <div class="card">
+                    <h3>Global Rank</h3>
+                    <p>#1,234</p>
+                </div>
+            </section>
+            <section class="heatmap">
+                <h3>Topic Mastery Heatmap</h3>
+                <div class="tags">
+                    <span class="strong">Arrays</span>
+                    <span class="average">Trees</span>
+                    <span class="weak">DP</span>
+                    <span class="strong">Graphs</span>
+                </div>
+            </section>
+            <section class="recommended">
+                <h3>Recommended Problems</h3>
+                <ul>
+                    <li>Two Sum Variations <span class="medium">Medium</span></li>
+                    <li>Binary Tree Level Order <span class="easy">Easy</span></li>
+                    <li>Longest Common Subsequence <span class="hard">Hard</span></li>
+                </ul>
+            </section>
+        </main>
+    </div>
+    <div>
+        <h2>Welcome, {{ user.name }}</h2>
+        <p>Email: {{ user.email }}</p>
+        <p>Role: {{ user.role }}</p>
+        <a href="/edit_profile">Edit Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
 </body>
+
 </html>
