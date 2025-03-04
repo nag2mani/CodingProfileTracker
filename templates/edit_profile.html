@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Profile</title>
+</head>
+<body>
+    <h2>Edit Profile</h2>
+    <form method="POST">
+        <label>LeetCode Profile:</label>
+        <input type="text" name="leetcode" value="{{ user.leetcode or '' }}"><br>
+
+        <label>Codeforces Profile:</label>
+        <input type="text" name="codeforces" value="{{ user.codeforces or '' }}"><br>
+
+        <label>LinkedIn Profile:</label>
+        <input type="text" name="linkedin" value="{{ user.linkedin or '' }}"><br>
+
+        <label>GitHub Profile:</label>
+        <input type="text" name="github" value="{{ user.github or '' }}"><br>
+
+        <button type="submit">Save Changes</button>
+    </form>
+    <a href="/dashboard">Back to Dashboard</a>
+</body>
+</html>

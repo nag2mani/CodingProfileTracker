@@ -1,71 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeetCode Tracker</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            text-align: center;
-        }
-        form {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 80%;
-            margin: 0 auto;
-            border-collapse: collapse;
-            background: white;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #333;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <title>Home</title>
 </head>
 <body>
-    <h1>LeetCode Student Tracker</h1>
-
-    <form action="/" method="post">
-        <input type="text" name="name" placeholder="Student Name" required>
-        <input type="text" name="leetcode_username" placeholder="LeetCode Username" required>
-        <button type="submit">Add Student</button>
-    </form>
-
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>LeetCode Username</th>
-            <th>Easy Solved</th>
-            <th>Medium Solved</th>
-            <th>Hard Solved</th>
-            <th>Ranking</th>
-        </tr>
-        {% for student in students %}
-        <tr>
-            <td>{{ student.name }}</td>
-            <td>{{ student.leetcode_username }}</td>
-            <td>{{ student.easy_solved }}</td>
-            <td>{{ student.medium_solved }}</td>
-            <td>{{ student.hard_solved }}</td>
-            <td>{{ student.ranking }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <h1>Welcome to LeetCode Profile Tracker</h1>
+    <a href="/login">Login</a> | <a href="/register">Register</a>
 </body>
 </html>
