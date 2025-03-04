@@ -1,2 +1,32 @@
 email:test@gmail.com
 pass: test
+
+
+API-1: https://leetcode-stats-api.herokuapp.com/nag2mani
+Output: {
+  "status": "success",
+  "message": "retrieved",
+  "totalSolved": 214,
+  "totalQuestions": 3476,
+  "easySolved": 93,
+  "totalEasy": 863,
+  "mediumSolved": 110,
+  "totalMedium": 1807,
+  "hardSolved": 11,
+  "totalHard": 806,
+  "acceptanceRate": 57.91,
+  "ranking": 525973,
+  "contributionPoints": 2335,
+  "reputation": 0,
+  "submissionCalendar": {
+    "1709596800": 1,
+    "1709683200": 1,
+    "1709769600": 2,
+    "1709856000": 6,
+    "1709942400": 7,
+    "1710028800": 15,
+  }
+}
+
+
+API Doc: https://colab.research.google.com/drive/1xlqntR2fUHILAeQfid3jLVOBl_9sHPzk?usp=sharing
