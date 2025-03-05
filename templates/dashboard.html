@@ -4,57 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
     <title>DSA Dashboard</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-=======
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous">
+    </script>
+    <script>
+        function toggleProfileDropdown() {
+            var dropdown = document.getElementById("profileDropdown");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
         }
-        .container {
-            max-width: 900px;
-            margin: auto;
-        }
-        .profile-box {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .profile-box h2 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .profile-box p {
-            margin: 5px 0;
-        }
-        .links a {
-            display: inline-block;
-            margin: 5px;
-            padding: 8px 12px;
-            text-decoration: none;
-            background: #007bff;
-            color: #fff;
-            border-radius: 5px;
-        }
-        .links a:hover {
-            background: #0056b3;
-        }
-    </style>
->>>>>>> 8a993eb0afe73e59eba86539ba1c727a8d289fae
+    
+        document.addEventListener("click", function (event) {
+            var profileContainer = document.querySelector(".profile-container");
+            if (!profileContainer.contains(event.target)) {
+                document.getElementById("profileDropdown").style.display = "none";
+            }
+        });
+    </script>
+    
 </head>
 
 <body>
-<<<<<<< HEAD
     <div class="container">
-        <aside class="sidebar">
+        <div class="sidebar">
             <h2>DSA Master</h2>
             <nav>
                 <ul>
@@ -65,30 +37,69 @@
                     <li><i class="fas fa-code"></i> Mock Interview</li>
                 </ul>
             </nav>
-        </aside>
+        </div>
 
-        <main class="dashboard">
-            <header>
-                <h1>Welcome back, Alex!</h1>
-                <p>Keep up the great progress</p>
+        <div class="dashboard">
+            <header class="profile-header">
+                <div class="profile-container">
+                    <i class="fas fa-user-circle profile-icon" onclick="toggleProfileDropdown()"></i>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <p><strong>{{ user.name }}</strong></p>
+                        <p>Email: {{ user.email }}</p>
+                        <p>Role: {{ user.role }}</p>
+                        <div class="profile-links">
+                            <a href="/edit_profile">Edit Profile</a>
+                            <a href="/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
             </header>
+
             <section class="stats">
+                {% if user.leetcode %}
+                <p><strong>LeetCode:</strong> <a href="{{ user.leetcode }}" target="_blank">{{ user.leetcode }}</a></p>
+                {% if leetcode_data %}
                 <div class="card">
-                    <h3>DSA Score</h3>
-                    <p>78/100</p>
+                    <h3>Ranking</h3>
+                    <p>{{ leetcode_data.ranking }}</p>
                 </div>
                 <div class="card">
-                    <h3>Problems Solved</h3>
-                    <p>156</p>
+                    <h3>Total Problems Solved</h3>
+                    <p>{{ leetcode_data.totalSolved }}</p>
                 </div>
                 <div class="card">
-                    <h3>Current Streak</h3>
-                    <p>12 days</p>
+                    <h3>Easy Problems Solved:</h3>
+                    <p>{{ leetcode_data.easySolved }} / {{ leetcode_data.totalEasy }}</p>
                 </div>
                 <div class="card">
-                    <h3>Global Rank</h3>
-                    <p>#1,234</p>
+                    <h3>Medium Problems Solved:</h3>
+                    <p>{{ leetcode_data.mediumSolved }} / {{ leetcode_data.totalMedium }}</p>
                 </div>
+                <div class="card">
+                    <h3>Hard Problems Solved:</h3>
+                    <p>{{ leetcode_data.hardSolved }} / {{ leetcode_data.totalHard }}</p>
+                </div>
+                {% else %}
+                <p>LeetCode data not available. Please check your profile link.</p>
+                {% endif %}
+                {% else %}
+                <p>LeetCode profile not added.</p>
+                {% endif %}
+                {% if user.codeforces %}
+                <p><strong>Codeforces:</strong> <a href="{{ user.codeforces }}" target="_blank">{{ user.codeforces
+                        }}</a></p>
+                {% endif %}
+                {% if user.linkedin %}
+                <p><strong>LinkedIn:</strong> <a href="{{ user.linkedin }}" target="_blank">{{ user.linkedin }}</a></p>
+                {% endif %}
+                {% if user.github %}
+                <p><strong>GitHub:</strong> <a href="{{ user.github }}" target="_blank">{{ user.github }}</a></p>
+                {% endif %}
+
+                <!-- <div class="links">
+                    <a href="/edit_profile">Edit Profile</a>
+                    <a href="/logout">Logout</a>
+                </div> -->
             </section>
             <section class="heatmap">
                 <h3>Topic Mastery Heatmap</h3>
@@ -107,57 +118,8 @@
                     <li>Longest Common Subsequence <span class="hard">Hard</span></li>
                 </ul>
             </section>
-        </main>
-    </div>
-    <div>
-        <h2>Welcome, {{ user.name }}</h2>
-        <p>Email: {{ user.email }}</p>
-        <p>Role: {{ user.role }}</p>
-        <a href="/edit_profile">Edit Profile</a>
-        <a href="/logout">Logout</a>
-    </div>
-=======
-
-    <div class="container">
-        <h1>Welcome, {{ user.name }}</h1>
-        <p>Email: {{ user.email }}</p>
-        <p>Role: {{ user.role }}</p>
-
-        <div class="profile-box">
-            <h2>Your Profile</h2>
-            {% if user.leetcode %}
-                <p><strong>LeetCode:</strong> <a href="{{ user.leetcode }}" target="_blank">{{ user.leetcode }}</a></p>
-                {% if leetcode_data %}
-                    <p><strong>Total Problems Solved:</strong> {{ leetcode_data.totalSolved }}</p>
-                    <p><strong>Ranking:</strong> {{ leetcode_data.ranking }}</p>
-                    <p><strong>Easy Problems Solved:</strong> {{ leetcode_data.easySolved }} / {{ leetcode_data.totalEasy }}</p>
-                    <p><strong>Medium Problems Solved:</strong> {{ leetcode_data.mediumSolved }} / {{ leetcode_data.totalMedium }}</p>
-                    <p><strong>Hard Problems Solved:</strong> {{ leetcode_data.hardSolved }} / {{ leetcode_data.totalHard }}</p>
-                {% else %}
-                    <p>LeetCode data not available. Please check your profile link.</p>
-                {% endif %}
-            {% else %}
-                <p>LeetCode profile not added.</p>
-            {% endif %}
-
-            {% if user.codeforces %}
-                <p><strong>Codeforces:</strong> <a href="{{ user.codeforces }}" target="_blank">{{ user.codeforces }}</a></p>
-            {% endif %}
-            {% if user.linkedin %}
-                <p><strong>LinkedIn:</strong> <a href="{{ user.linkedin }}" target="_blank">{{ user.linkedin }}</a></p>
-            {% endif %}
-            {% if user.github %}
-                <p><strong>GitHub:</strong> <a href="{{ user.github }}" target="_blank">{{ user.github }}</a></p>
-            {% endif %}
-
-            <div class="links">
-                <a href="/edit_profile">Edit Profile</a>
-                <a href="/logout">Logout</a>
-            </div>
         </div>
     </div>
-
->>>>>>> 8a993eb0afe73e59eba86539ba1c727a8d289fae
 </body>
 
 </html>
