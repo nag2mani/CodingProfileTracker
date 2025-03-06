@@ -13,7 +13,7 @@
             var dropdown = document.getElementById("profileDropdown");
             dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
         }
-    
+
         document.addEventListener("click", function (event) {
             var profileContainer = document.querySelector(".profile-container");
             if (!profileContainer.contains(event.target)) {
@@ -21,7 +21,6 @@
             }
         });
     </script>
-    
 </head>
 
 <body>
@@ -42,14 +41,19 @@
         <div class="dashboard">
             <header class="profile-header">
                 <div class="profile-container">
-                    <i class="fas fa-user-circle profile-icon" onclick="toggleProfileDropdown()"></i>
+                    <div class="greeting-message"><strong>Welcome, {{ user.name }}!</strong></div>
+                    <div class="profile-trigger" onclick="toggleProfileDropdown()">
+                        <span class="profile-image"><img src="{{ url_for('static', filename='images/profile.svg') }}" alt="My SVG Icon" width="50" height="50">
+                        </span>
+                        <span class="profile-name"><p><strong>{{ user.name }}</strong></p></span>
+                    </div>
                     <div class="profile-dropdown" id="profileDropdown">
-                        <p><strong>{{ user.name }}</strong></p>
-                        <p>Email: {{ user.email }}</p>
-                        <p>Role: {{ user.role }}</p>
-                        <div class="profile-links">
-                            <a href="/edit_profile">Edit Profile</a>
-                            <a href="/logout">Logout</a>
+                        <div class="profile-details">
+                            <p><strong>{{ user.name }}</strong></p>
+                            <p>Email: {{ user.email }}</p>
+                            <p>Role: {{ user.role }}</p>
+                            <p><a href="/edit_profile">Edit Profile</a></p>
+                            <p><a href="/logout">Logout</a></p>
                         </div>
                     </div>
                 </div>
@@ -57,10 +61,9 @@
 
             <section class="stats">
                 {% if user.leetcode %}
-                <!-- <p><strong>LeetCode:</strong> <a href="{{ user.leetcode }}" target="_blank">{{ user.leetcode }}</a></p> -->
                 {% if leetcode_data %}
                 <div class="card">
-                    <h3>Ranking</h3>
+                    <h3>Leetcode Ranking</h3>
                     <p>{{ leetcode_data.ranking }}</p>
                 </div>
                 <div class="card">
@@ -68,7 +71,7 @@
                     <p>{{ leetcode_data.totalSolved }}</p>
                 </div>
                 <div class="card">
-                    <h3>Easy Problems Solved:</h3>
+                    <h3>Easy Problems Solved</h3>
                     <p>{{ leetcode_data.easySolved }} / {{ leetcode_data.totalEasy }}</p>
                 </div>
                 <div class="card">
@@ -97,8 +100,7 @@
                 {% endif %}
 
                 <!-- <div class="links">
-                    <a href="/edit_profile">Edit Profile</a>
-                    <a href="/logout">Logout</a>
+                    
                 </div> -->
             </section>
             <section class="heatmap">
