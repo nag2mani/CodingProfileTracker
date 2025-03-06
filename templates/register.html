@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
-    <h2>Register</h2>
     <form method="POST">
         <input type="text" name="name" placeholder="Full Name" required><br>
         <input type="email" name="email" placeholder="Email" required><br>

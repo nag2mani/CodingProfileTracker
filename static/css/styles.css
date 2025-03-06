@@ -134,6 +134,7 @@ body {
     align-items: center;
     position: relative;
     padding: 10px;
+    background-color: #F44336;
 }
 
 .profile-container {
