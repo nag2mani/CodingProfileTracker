@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+.header {
+    background-color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+.header a {
+    text-decoration: none;
+    color: #000;
+}
+.container {
+    display: flex;
+    padding: 20px;
+}
+.main-content {
+    flex: 3;
+    margin-right: 20px;
+}
+.sidebar {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.card {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.card h2 {
+    margin-top: 0;
+}
+.performance-overview {
+    display: flex;
+    justify-content: space-between;
+}
+.performance-overview div {
+    flex: 1;
+    background-color: #e0e0e0;
+    margin: 5px;
+    padding: 20px;
+    text-align: center;
+    border-radius: 5px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+.actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+}
+.actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.actions .assign {
+    background-color: #007bff;
+    color: #fff;
+}
+.actions .message {
+    background-color: #28a745;
+    color: #fff;
+}
+.actions .report {
+    background-color: #ffc107;
+    color: #fff;
+}

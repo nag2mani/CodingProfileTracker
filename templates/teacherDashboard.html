@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacherDashboard.css') }}">
+
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="nav-links">
+            <a href="#">Dashboard</a>
+            <a href="#">Students</a>
+            <a href="#">Add Questions</a>
+            <a href="#">Reports</a>
+            <a href="#">Contests</a>
+        </div>
+        <button class="profile-btn">Profile</button>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <a href="#">Home</a>
+            <a href="/studentProfile">Student Profiles</a>
+            <a href="#">Assignments & Questions</a>
+            <a href="/studentAnalysis">Reports & Insights</a>
+            <p><a href="/edit_profile">Edit Profile</a></p>
+            <a href="#">Settings</a>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>Class Performance Summary</h2>
+                <p>Class solved X problems this month</p>
+                <p>Leaderboard</p>
+                <p>Top performers with rank, problems solved, contest scores</p>
+                <p>Weakest topic detection: Dynamic Programming is the least attempted</p>
+                <p>Placeholder for a bar/line chart</p>
+            </div>
+
+            <div class="card">
+                <h2>Alerts & Notifications</h2>
+                <p>3 students have not solved a problem in 5 days</p>
+                <p>Upcoming LeetCode contest in 2 days</p>
+                <p>New questions added for practice</p>
+            </div>
+
+            <input type="text" placeholder="Search students by name, roll number, or performance">
+
+            <div class="card">
+                <h2>Student Stats</h2>
+                <p>Problems solved: X</p>
+                <p>Contests participated: X</p>
+                <p>Weak topics: X</p>
+                <p>Progress summary: X</p>
+            </div>
+
+            <div class="card">
+                <h2>Comparison & Trends</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Problems Solved</th>
+                            <th>Accuracy</th>
+                            <th>Topic Mastery</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Student A</td>
+                            <td>X</td>
+                            <td>X%</td>
+                            <td>X</td>
+                        </tr>
+                        <tr>
+                            <td>Student B</td>
+                            <td>X</td>
+                            <td>X%</td>
+                            <td>X</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Placeholder section for a text-based trend summary</p>
+            </div>
+
+            <div class="actions">
+                <button>Add New Questions</button>
+                <button>Assign Practice Sets</button>
+                <button>Schedule Mock Contests</button>
+            </div>
+
+            <div class="card">
+                <h2>Reports & AI Insights</h2>
+                <p>Generate PDF/Excel Reports</p>
+                <p>These 5 students improved significantly in the last 2 weeks</p>
+                <p>Recommend resources based on weak areas</p>
+            </div>
+
+            <div class="card">
+                <h2>Student Engagement & Support Panel</h2>
+                <p>Message students who haven't solved problems this week</p>
+                <p>Send study recommendations based on weak areas</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

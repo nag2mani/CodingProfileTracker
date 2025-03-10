@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/studentProfile.css') }}">
+
+</head>
+<body>
+    <div class="header">
+        <a href="#">Back</a>
+        <h1>Student Profile</h1>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            
+            <div class="card">
+                <h2>Student Info</h2>
+                <p><strong>John Doe</strong></p>
+                <a href="#">LeetCode Profile</a>
+            </div>
+
+            <div class="card">
+                
+                <h2>Performance Overview</h2>
+                <div class="performance-overview">
+                    <div>
+                        <p>Total Problems Solved</p>
+                        <h3>{{ leetcode_data.totalSolved }}</h3>
+                    </div>
+                    <div>
+                        <p>Leetcode Ranking</p>
+                        <h3>{{ leetcode_data.ranking }}</h3>
+                    </div>
+                    <div>
+                        <p>Easy Problems Solved</p>
+                        <h3>{{ leetcode_data.easySolved }} / {{ leetcode_data.totalEasy }}</h3>
+                    </div>
+                    <div>
+                        <p>Medium Problems Solved:</p>
+                        <h3>{{ leetcode_data.mediumSolved }} / {{ leetcode_data.totalMedium }}</h3>
+                    </div>
+                    <div>
+                        <p>Hard Problems Solved:</p>
+                        <h3>{{ leetcode_data.hardSolved }} / {{ leetcode_data.totalHard }}</h3>
+                    </div>
+                    <div>
+                        <p>Maximum Streak</p>
+                        <h3>20 Days</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Solved Problems List</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Problem Name</th>
+                            <th>Solved Date & Time</th>
+                            <th>Time Complexity</th>
+                            <th>Space Complexity</th>
+                            <th>Difficulty</th>
+                            <th>Topic</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Two Sum</td>
+                            <td>2023-09-01 14:30</td>
+                            <td>O(n)</td>
+                            <td>O(n)</td>
+                            <td>Easy</td>
+                            <td>Arrays</td>
+                        </tr>
+                        <tr>
+                            <td>Longest Substring</td>
+                            <td>2023-09-02 10:15</td>
+                            <td>O(min(n, m))</td>
+                            <td>O(n)</td>
+                            <td>Medium</td>
+                            <td>Strings</td>
+                        </tr>
+                        <tr>
+                            <td>Merge Intervals</td>
+                            <td>2023-09-03 16:45</td>
+                            <td>O(n log n)</td>
+                            <td>O(n)</td>
+                            <td>Medium</td>
+                            <td>Intervals</td>
+                        </tr>
+                        <tr>
+                            <td>Climbing Stairs</td>
+                            <td>2023-09-04 12:00</td>
+                            <td>O(n)</td>
+                            <td>O(1)</td>
+                            <td>Easy</td>
+                            <td>Dynamic Programming</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Consistency Matrix</h2>
+                <p>Daily Problem-Solving Activity</p>
+                <p>[Heatmap Placeholder]</p>
+            </div>
+            
+        </div>
+
+        <div class="sidebar">
+            <h2>Performance Insights</h2>
+            <p><strong>Most Solved Topic:</strong> Arrays - 25 questions solved</p>
+            <p><strong>Weakest Topic:</strong> DP - Only 3 questions attempted</p>
+            <p><strong>Fastest Solved Question:</strong> Two Sum - 15 minutes</p>
+            <p><strong>Slowest Solved Question:</strong> N Queens - 45 minutes</p>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="assign">Assign New Problems</button>
+        <button class="message">Message Student</button>
+        <button class="report">Generate Performance Report</button>
+    </div>
+
+</body>
+</html>

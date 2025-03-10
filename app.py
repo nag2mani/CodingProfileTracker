@@ -86,15 +86,16 @@ def login():
 def dashboard():
     if 'email' not in session:
         return redirect('/login')
-    
     user = User.query.filter_by(email=session['email']).first()
-    leetcode_data = None
-    
-    if user.leetcode:
-        username = user.leetcode.split("/")[-2]  # Extract LeetCode username from URL
-        leetcode_data = get_leetcode_data(username)
-    
-    return render_template('dashboard.html', user=user, leetcode_data=leetcode_data)
+    if user.role == 'teacher':
+        return render_template('teacherDashboard.html')
+    else:
+        leetcode_data = None
+        if user.leetcode:
+            username = user.leetcode.split("/")[-2]  # Extract LeetCode username from URL
+            leetcode_data = get_leetcode_data(username)
+        
+        return render_template('studentDashboard.html', user=user, leetcode_data=leetcode_data)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
