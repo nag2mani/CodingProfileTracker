@@ -97,6 +97,14 @@ def dashboard():
         
         return render_template('studentDashboard.html', user=user, leetcode_data=leetcode_data)
 
+@app.route('/profiles')
+def profiles():
+    return render_template('studentsList.html')
+
+@app.route('/studentAnalysis')
+def studentAnalysis():
+    return render_template('studentAnalysis.html')
+
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     if 'email' not in session:

@@ -1,229 +1,153 @@
-/* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    display: flex;
+    background-color: #f5f5f5;
 }
 
 .container {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 20px;
 }
 
-/* Sidebar */
 .sidebar {
-    width: 250px;
+    width: 200px;
     background-color: #fff;
     padding: 20px;
-    height: 100vh;
-    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    overflow-y: auto;
+    border-right: 1px solid #ddd;
 }
 
 .sidebar h2 {
-    font-size: 22px;
-    margin-bottom: 20px;
+    margin-top: 0;
 }
 
 .sidebar nav ul {
-    list-style: none;
+    list-style-type: none;
     padding: 0;
 }
 
 .sidebar nav ul li {
-    padding: 10px;
-    margin: 10px 0;
+    padding: 10px 0;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    transition: background 0.3s ease-in-out;
 }
 
-.sidebar nav ul li i {
-    margin-right: 10px;
-}
-
-.sidebar nav ul li.active,
-.sidebar nav ul li:hover {
+.sidebar nav ul li.active {
     font-weight: bold;
-    color: #007bff;
-    background: rgba(0, 123, 255, 0.1);
-    border-radius: 5px;
 }
 
-/* Main Dashboard */
 .dashboard {
     flex: 1;
     padding: 20px;
-    margin-left: 260px; /* Space for sidebar */
 }
 
-.dashboard header h1 {
-    margin: 0;
+.profile-header {
     display: flex;
-    font-size: 26px;
-}
-
-.dashboard .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.dashboard .card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-/* Heatmap */
-.heatmap {
-    margin-top: 20px;
-}
-
-.heatmap .tags {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.heatmap .tags span {
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.strong { background-color: #4CAF50; color: white; }
-.average { background-color: #FFC107; color: white; }
-.weak { background-color: #F44336; color: white; }
-
-/* Recommended Problems */
-.recommended ul {
-    list-style: none;
-    padding: 0;
-}
-
-.recommended ul li {
-    background: white;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    align-items: center;
-}
-
-.easy { color: #4CAF50; font-weight: bold; }
-.medium { color: #FFC107; font-weight: bold; }
-.hard { color: #F44336; font-weight: bold; }
-
-/* Profile Section */
-/* .profile-container {
-    position: relative;
-    padding: 15px;
-    align-content: flex-end;
     justify-content: flex-end;
-    align-content: end;
-    background-color: aqua;
-}
-
-.profile-trigger {
-    cursor: pointer;
-    display: flex;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-} */
-
-/* ---------------------------------- */
-/* Profile Section */
-.profile-container {
-    position: relative; /* Keep it as relative */
-    width: 100%; /* Ensure full width */
-    padding: 15px;
-    min-height: 60px;
-    background: #ffffff;
-    align-content: center;
-}
-
-
-
-
-/* Move only the profile trigger to the right */
-.profile-trigger {
-    cursor: pointer;
-    display: flex;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #ffffff;
-    border-radius: 4px;
-    /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); */
-    position: absolute;
-    right: 15px; /* Align to the right */
-    top: 50%;
-    transform: translateY(-50%); /* Center it vertically */
-}
-
-.greeting-message {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-right: 10px;
-    padding: 5px 10px;
-    margin: auto;
     align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
 
-/* ---------------------------------- */
+.profile-container {
+    position: relative;
+}
+
+.profile-trigger {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-image img {
+    border-radius: 50%;
+}
 
 .profile-name {
-    font-weight: 600;
-    font-size: 16px;
+    margin-left: 10px;
 }
 
 .profile-dropdown {
-    display: none;
     position: absolute;
-    top: 100%;
+    top: 60px;
     right: 0;
-    background: white;
-    min-width: 200px;
-    border-radius: 4px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    z-index: 1000;
-}
-
-.profile-details {
-    padding: 16px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: none;
+    padding: 10px;
+    width: 200px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .profile-details p {
-    margin: 8px 0;
-    color: #333;
-}
-.profile-details a {
-    text-decoration: none;
-    color: red;
+    margin: 5px 0;
 }
 
-/* .profile-trigger {
-    background-color: red;
-    max-width: 150px;
-    justify-content: center;
-    max-height: 100px;
-} */
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
 
+.card {
+    background-color: #fff;
+    padding: 20px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    flex: 1 1 calc(33.333% - 20px);
+    box-sizing: border-box;
+}
 
+.heatmap, .solved {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+/* Other styles remain the same */
 
+/* Heatmap Tags */
+.tags span {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.strong {
+    background-color: #4caf50; /* Darker green */
+}
+
+.average {
+    background-color: #81c784; /* Medium green */
+}
+
+.weak {
+    background-color: #c8e6c9; /* Light green */
+}
+
+/* Solved Problems Difficulty */
+.solved ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.solved li {
+    padding: 5px 0;
+}
+
+.easy {
+    color: #28a745; /* Green for easy */
+}
+
+.medium {
+    color: #ffc107; /* Yellow for medium */
+}
+
+.hard {
+    color: #dc3545; /* Red for hard */
+}
