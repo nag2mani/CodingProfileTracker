@@ -1,0 +1,158 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #F7F7F7; /* Soft Gray */
+    color: #6B7280; /* Soft Gray text */
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Login Container */
+.login-container {
+    padding: 32px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Login Card */
+.login-card {
+    background-color: #FFFFFF; /* White */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.logo {
+    margin-bottom: 16px;
+}
+
+.logo svg {
+    width: 40px;
+    height: 40px;
+}
+
+.login-card h1 {
+    font-size: 24px;
+    font-weight: 600; /* Semi-bold */
+    margin-bottom: 8px;
+}
+
+.login-card p {
+    font-size: 14px;
+    font-weight: 400; /* Regular */
+    margin-bottom: 24px;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #E6F0FA; /* Light Blue */
+    border-radius: 8px;
+    background-color: #F7F7F7; /* Soft Gray */
+    color: #6B7280;
+}
+
+.form-group input::placeholder {
+    color: #6B7280;
+}
+
+/* Forgot Password Link */
+.forgot-password {
+    font-size: 14px;
+    color: #D4F4E2; /* Mint Green */
+    text-align: right;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Login Button */
+.btn {
+    display: inline-block;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-primary {
+    background-color: #F9A8A8; /* Warm Coral */
+    color: #FFFFFF; /* White */
+}
+
+.btn-primary:hover {
+    background-color: #F68B8B; /* Slightly darker coral */
+}
+
+/* Sign Up Link */
+.signup-link {
+    font-size: 14px;
+    margin-top: 16px;
+}
+
+.signup-link a {
+    color: #D4F4E2; /* Mint Green */
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 16px;
+    }
+
+    .login-card {
+        padding: 24px;
+    }
+
+    .login-card h1 {
+        font-size: 20px;
+    }
+}

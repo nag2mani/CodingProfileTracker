@@ -1,0 +1,270 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #F7F7F7; /* Soft Gray */
+    color: #6B7280; /* Soft Gray text */
+    line-height: 1.6;
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 200px;
+    background-color: #E6F0FA; /* Light Blue */
+    padding: 24px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 48px;
+}
+
+.logo svg {
+    width: 24px;
+    height: 24px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    margin-bottom: 16px;
+}
+
+.sidebar-nav a {
+    font-size: 14px;
+    color: #6B7280;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar-nav a svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sidebar-nav .active a {
+    font-weight: 600;
+    color: #F9A8A8; /* Warm Coral */
+}
+
+.sidebar-nav .active a svg {
+    fill: #F9A8A8; /* Warm Coral */
+}
+
+.sidebar-nav a:hover {
+    color: #F9A8A8;
+}
+
+.sidebar-nav a:hover svg {
+    fill: #F9A8A8;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 200px;
+    padding: 24px;
+    width: calc(100% - 200px);
+    background-color: #FFFFFF; /* White */
+    min-height: 100vh;
+}
+
+.main-content header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+/* Quick Stats */
+.quick-stats h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.stats-grid {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background-color: #E6F0FA; /* Light Blue */
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    flex: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #F9A8A8; /* Warm Coral */
+}
+
+.stat-label {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Content Grid (Activity, Deadlines, Quote) */
+.content-grid {
+    display: flex;
+    gap: 24px;
+}
+
+.recent-activity {
+    flex: 2;
+}
+
+.deadlines-quote {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.recent-activity h2,
+.upcoming-deadlines h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.recent-activity ul,
+.upcoming-deadlines ul {
+    list-style: none;
+    background-color: #F7F7F7; /* Soft Gray */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recent-activity li,
+.upcoming-deadlines li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #E6F0FA;
+}
+
+.recent-activity li:last-child,
+.upcoming-deadlines li:last-child {
+    border-bottom: none;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 16px;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-details p {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.activity-details span {
+    font-size: 12px;
+    color: #A0AEC0;
+}
+
+.deadline-details p {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.deadline-details span {
+    font-size: 12px;
+    color: #A0AEC0;
+}
+
+.deadline-date {
+    font-size: 14px;
+    font-weight: 400;
+    color: #F9A8A8; /* Warm Coral */
+}
+
+/* Motivation Quote */
+.motivation-quote {
+    background-color: #D4F4E2; /* Mint Green */
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1;
+}
+
+.motivation-quote blockquote {
+    font-size: 14px;
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+.motivation-quote cite {
+    font-size: 12px;
+    font-style: normal;
+    color: #6B7280;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 150px;
+    }
+
+    .main-content {
+        margin-left: 150px;
+        width: calc(100% - 150px);
+    }
+
+    .stats-grid {
+        flex-direction: column;
+    }
+
+    .content-grid {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 16px;
+    }
+
+    .main-content header h1 {
+        font-size: 20px;
+    }
+}
