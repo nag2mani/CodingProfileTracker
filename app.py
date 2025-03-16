@@ -88,7 +88,7 @@ def dashboard():
         return redirect('/login')
     user = User.query.filter_by(email=session['email']).first()
     if user.role == 'teacher':
-        return render_template('StudentDashboard.html')
+        return render_template('TeacherDashboard.html')
     else:
         leetcode_data = None
         if user.leetcode:
@@ -97,9 +97,40 @@ def dashboard():
         
         return render_template('StudentDashboard.html', user=user, leetcode_data=leetcode_data)
 
-@app.route('/profiles')
-def profiles():
-    return render_template('studentsList.html')
+# Dummy student data (replace with actual database queries)
+students = [
+    {"id": 1, "name": "Alice Cooper", "problems_solved": 156, "streak": "12 days", "rank": "#1", "last_active": "2 mins ago", "status": "Active"},
+    {"id": 2, "name": "Bob Smith", "problems_solved": 143, "streak": "8 days", "rank": "#2", "last_active": "15 mins ago", "status": "Active"},
+    {"id": 3, "name": "Carol Davis", "problems_solved": 128, "streak": "5 days", "rank": "#3", "last_active": "1 hour ago", "status": "Inactive"},
+    {"id": 4, "name": "David Wilson", "problems_solved": 112, "streak": "3 days", "rank": "#4", "last_active": "3 hours ago", "status": "Active"},
+    {"id": 5, "name": "Eve Johnson", "problems_solved": 98, "streak": "1 day", "rank": "#5", "last_active": "5 hours ago", "status": "Inactive"},
+    {"id": 6, "name": "Alice Cooper", "problems_solved": 156, "streak": "12 days", "rank": "#1", "last_active": "2 mins ago", "status": "Active"},
+    {"id": 7, "name": "Bob Smith", "problems_solved": 143, "streak": "8 days", "rank": "#2", "last_active": "15 mins ago", "status": "Active"},
+    {"id": 8, "name": "Carol Davis", "problems_solved": 128, "streak": "5 days", "rank": "#3", "last_active": "1 hour ago", "status": "Inactive"},
+    {"id": 9, "name": "David Wilson", "problems_solved": 112, "streak": "3 days", "rank": "#4", "last_active": "3 hours ago", "status": "Active"},
+    {"id": 10, "name": "Eve Johnson", "problems_solved": 98, "streak": "1 day", "rank": "#5", "last_active": "5 hours ago", "status": "Inactive"},
+    {"id": 11, "name": "Alice Cooper", "problems_solved": 156, "streak": "12 days", "rank": "#1", "last_active": "2 mins ago", "status": "Active"},
+    {"id": 12, "name": "Bob Smith", "problems_solved": 143, "streak": "8 days", "rank": "#2", "last_active": "15 mins ago", "status": "Active"},
+    {"id": 13, "name": "Carol Davis", "problems_solved": 128, "streak": "5 days", "rank": "#3", "last_active": "1 hour ago", "status": "Inactive"},
+    {"id": 14, "name": "David Wilson", "problems_solved": 112, "streak": "3 days", "rank": "#4", "last_active": "3 hours ago", "status": "Active"},
+    {"id": 15, "name": "Eve Johnson", "problems_solved": 98, "streak": "1 day", "rank": "#5", "last_active": "5 hours ago", "status": "Inactive"},
+]
+
+@app.route('/students')
+def student_list():
+    return render_template('StudentList.html', students=students)
+
+@app.route('/student/<int:student_id>')
+def student_profile(student_id):
+    # Find the student by ID (replace with actual database query)
+    student = next((s for s in students if s["id"] == student_id), None)
+    if student:
+        return render_template('StudentProfile.html', student=student)
+    return "Student not found", 404
+
+@app.route('/assignment')
+def assignment():
+    return render_template('AssignmentPage.html')
 
 @app.route('/studentAnalysis')
 def studentAnalysis():

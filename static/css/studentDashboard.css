@@ -99,10 +99,51 @@ body {
     font-weight: 600;
 }
 
+/* Avatar and Dropdown */
+.avatar-container {
+    position: relative; /* Required for absolute positioning of the dropdown */
+}
+
 .user-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+.profile-dropdown {
+    display: none; /* Initially hidden */
+    position: absolute;
+    top: 50px; /* Position below the avatar */
+    right: 0;
+    background-color: #FFFFFF; /* White background */
+    border: 1px solid #E6F0FA; /* Light Blue border */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it appears above other elements */
+    min-width: 200px;
+}
+
+.profile-details {
+    padding: 16px;
+}
+
+.profile-details p {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.profile-details p strong {
+    color: #6B7280;
+}
+
+.profile-details a {
+    color: #F9A8A8; /* Warm Coral for links */
+    text-decoration: none;
+}
+
+.profile-details a:hover {
+    text-decoration: underline;
 }
 
 /* Quick Stats */
@@ -273,6 +314,11 @@ body {
     .content-grid {
         flex-direction: column;
     }
+
+    .profile-dropdown {
+        right: auto;
+        left: 0;
+    }
 }
 
 @media (max-width: 480px) {
@@ -300,5 +346,11 @@ body {
 
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+
+    .profile-dropdown {
+        width: 100%;
+        left: 0;
+        right: 0;
     }
 }

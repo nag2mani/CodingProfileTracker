@@ -83,7 +83,7 @@ body {
     margin-left: 200px;
     padding: 24px;
     width: calc(100% - 200px);
-    background-color: #F7F7F7; /* White */
+    background-color: #FFFFFF; /* White */
     min-height: 100vh;
 }
 
@@ -111,7 +111,7 @@ body {
     font-family: 'Poppins', sans-serif;
     border: 1px solid #E6F0FA; /* Light Blue */
     border-radius: 8px;
-    background-color: #FFFFFF; /* Soft Gray */
+    background-color: #F7F7F7; /* Soft Gray */
     color: #6B7280;
     width: 200px;
 }
@@ -139,12 +139,14 @@ body {
 /* Table Container */
 .table-container {
     overflow-x: auto;
+    max-height: 600px; /* Limit height for scrolling */
+    overflow-y: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #FFFFFF; /* Soft Gray */
+    background-color: #F7F7F7; /* Soft Gray */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -158,29 +160,41 @@ th, td {
 th {
     background-color: #E6F0FA; /* Light Blue */
     font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 td {
     border-bottom: 1px solid #E6F0FA;
 }
 
-td:first-child {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
+/* Style for the avatar in the Name column */
 .avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    margin-right: 12px;
+    vertical-align: middle;
 }
 
+/* Make rows clickable */
+.student-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.student-row:hover {
+    background-color: #E6F0FA; /* Light Blue on hover */
+}
+
+/* Status Styling */
 .status {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 4px 12px;
     border-radius: 12px;
     font-size: 12px;
+    font-weight: 400;
 }
 
 .status.active {
