@@ -132,6 +132,10 @@ def student_profile(student_id):
 def assignment():
     return render_template('AssignmentPage.html')
 
+@app.route('/student_assignment')
+def student_assignment():
+    return render_template('StudentAssignment.html')
+
 @app.route('/studentAnalysis')
 def studentAnalysis():
     return render_template('studentAnalysis.html')
