@@ -143,6 +143,11 @@ body {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 24px;
+    grid-template-rows: auto auto auto; /* Define rows explicitly */
+    grid-template-areas: 
+        "problems right-column"
+        "goal right-column"
+        ". .";
 }
 
 .chart-section {
@@ -169,10 +174,17 @@ body {
     color: #6B7280;
 }
 
+/* Assign grid areas */
+.chart-section:nth-child(1) {
+    grid-area: problems;
+}
+
 .right-column {
+    grid-area: right-column;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    max-height: fit-content;
 }
 
 .progress-over-time {
@@ -234,7 +246,7 @@ body {
 }
 
 .goal-completion {
-    grid-column: 1 / 2;
+    grid-area: goal;
 }
 
 /* Responsive Design */
@@ -250,10 +262,20 @@ body {
 
     .analytics-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        grid-template-areas: 
+            "problems"
+            "right-column"
+            "right-column"
+            "goal";
+    }
+
+    .right-column {
+        grid-area: right-column;
     }
 
     .goal-completion {
-        grid-column: 1 / 1;
+        grid-area: goal;
     }
 }
 
