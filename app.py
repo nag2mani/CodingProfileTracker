@@ -155,7 +155,7 @@ def edit_profile():
         flash('Profile updated successfully!', 'success')
         return redirect('/dashboard')
     
-    return render_template('edit_profile.html', user=user)
+    return render_template('EditProfile.html', user=user)
 
 @app.route('/logout')
 def logout():
