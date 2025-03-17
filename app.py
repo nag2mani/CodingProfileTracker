@@ -46,7 +46,7 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        name = request.form['name']
+        name = request.form['full-name']
         email = request.form['email']
         password = request.form['password']
         role = request.form['role']  # student or teacher
@@ -61,7 +61,7 @@ def register():
         flash('Registration successful! Please login.', 'success')
         return redirect('/login')
     
-    return render_template('register.html')
+    return render_template('SignupPage.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -80,7 +80,7 @@ def login():
             flash('Invalid email or password', 'danger')
             return redirect('/login')
     
-    return render_template('login.html')
+    return render_template('LoginPage.html')
 
 @app.route('/dashboard')
 def dashboard():
@@ -136,9 +136,9 @@ def assignment():
 def student_assignment():
     return render_template('StudentAssignment.html')
 
-@app.route('/studentAnalysis')
+@app.route('/analytics')
 def studentAnalysis():
-    return render_template('studentAnalysis.html')
+    return render_template('AnalyticsPage.html')
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
