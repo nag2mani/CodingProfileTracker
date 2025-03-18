@@ -151,6 +151,12 @@ body {
     background-color: #F68B8B; /* Slightly darker coral */
 }
 
+.btn-secondary {
+    background-color: #F7F7F7; /* Warm Coral */
+    margin-right: 10px;
+    color: #000000; /* White */
+}
+
 /* Table Container */
 .table-container {
     overflow-x: auto;
@@ -190,7 +196,7 @@ td {
 .progress-bar span {
     display: block;
     height: 100%;
-    background-color: #D4F4E2; /* Mint Green */
+    background-color: #6adc9b; /* Mint Green */
 }
 
 .status {
@@ -214,6 +220,67 @@ td {
 .actions {
     font-size: 20px;
     cursor: pointer;
+}
+
+/* Dropdown Functionality CSS */
+.action-dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #FFFFFF; /* White */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    min-width: 150px;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.dropdown-content a, .dropdown-content form {
+    display: block;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #6B7280;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #E6F0FA; /* Light Blue */
+    color: #F9A8A8; /* Warm Coral */
+}
+
+.dropdown-content form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 16px;
+}
+
+.dropdown-content input[type="date"] {
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #E6F0FA;
+    border-radius: 4px;
+    background-color: #F7F7F7;
+    width: 120px;
+}
+
+.dropdown-content button {
+    padding: 6px 12px;
+    font-size: 12px;
+    background-color: #F9A8A8; /* Warm Coral */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dropdown-content button:hover {
+    background-color: #F68B8B; /* Slightly darker coral */
 }
 
 /* Responsive Design */
@@ -267,5 +334,11 @@ td {
 
     th, td {
         min-width: 120px;
+    }
+
+    .dropdown-content {
+        right: auto;
+        left: 0;
+        width: 100%;
     }
 }

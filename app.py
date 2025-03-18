@@ -33,11 +33,17 @@ with app.app_context():
 
 def get_leetcode_data(username):
     url = f"https://leetcode-stats-api.herokuapp.com/{username}"
-    response = requests.get(url)
+    try:
+        response = requests.get(url, timeout=5)  # Add a timeout
+        print("Status of Response:", response.status_code)
+        
+        if response.status_code == 200:
+            return response.json()
+    except requests.RequestException as e:
+        print("Error fetching LeetCode data:", e)
     
-    if response.status_code == 200:
-        return response.json()
-    return None
+    return None  # Return None if API fails
+
 
 @app.route('/')
 def index():

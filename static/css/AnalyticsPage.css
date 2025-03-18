@@ -138,6 +138,12 @@ body {
     background-color: #F68B8B; /* Slightly darker coral */
 }
 
+.btn-secondary {
+    background-color: #F7F7F7; /* Warm Coral */
+    margin-right: 10px;
+    color: #000000; /* White */
+}
+
 /* Analytics Grid */
 .analytics-grid {
     display: grid;
