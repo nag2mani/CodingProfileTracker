@@ -93,7 +93,7 @@ form {
 /* Forgot Password Link */
 .forgot-password {
     font-size: 14px;
-    color: #D4F4E2; /* Mint Green */
+    color: #6df3a7; /* Mint Green */
     text-align: right;
     text-decoration: none;
     display: block;
@@ -119,12 +119,12 @@ form {
 }
 
 .btn-primary {
-    background-color: #F9A8A8; /* Warm Coral */
+    background-color: #f89595; /* Warm Coral */
     color: #FFFFFF; /* White */
 }
 
 .btn-primary:hover {
-    background-color: #F68B8B; /* Slightly darker coral */
+    background-color: #f87d7d; /* Slightly darker coral */
 }
 
 /* Sign Up Link */
@@ -134,7 +134,7 @@ form {
 }
 
 .signup-link a {
-    color: #D4F4E2; /* Mint Green */
+    color: #6df3a7; /* Mint Green */
     text-decoration: none;
 }
 

@@ -9,7 +9,7 @@
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #F7F7F7; /* Soft Gray */
-    color: #6B7280; /* Soft Gray text */
+    color: #606269; /* Soft Gray text */
     line-height: 1.6;
 }
 
@@ -60,12 +60,12 @@ body {
 }
 
 .btn-primary {
-    background-color: #F9A8A8; /* Warm Coral */
+    background-color: #f89595; /* Warm Coral */
     color: #FFFFFF; /* White */
 }
 
 .btn-primary:hover {
-    background-color: #F68B8B; /* Slightly darker coral */
+    background-color: #f87d7d; /* Slightly darker coral */
 }
 
 .btn-secondary {

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ assignment.name }} - DSA Progress Hub</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/AssignmentDetailTeacher.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM11 7H13V13H11V7ZM11 15H13V17H11V15Z" fill="#6B7280"/>
+            </svg>
+            <span>DSA Progress Hub</span>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="active">
+                    <a href="/teacher_assignments">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#F9A8A8"/>
+                        </svg>
+                        Assignments
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header>
+            <h1>{{ assignment.name }}</h1>
+            <div class="header-actions">
+                <a href="/teacher_assignments" class="btn btn-secondary">
+                    Back to Assignments
+                </a>
+            </div>
+        </header>
+
+        <!-- Assignment Overview -->
+        <section class="assignment-overview">
+            <h2>Assignment Overview</h2>
+            <div class="overview-details">
+                <p><strong>Due Date:</strong> {{ assignment.due_date }}</p>
+                <p><strong>Completion Rate:</strong> {{ assignment.completion_rate }}%</p>
+                <p><strong>Status:</strong> <span class="status {{ assignment.status }}">{{ assignment.status | replace('-', ' ') | capitalize }}</span></p>
+                <p><strong>Solved by:</strong> {{ solved_count }} out of {{ total_students }} students</p>
+            </div>
+        </section>
+
+        <!-- Problem Details -->
+        <section class="problem-details">
+            <h2>Problem Details</h2>
+            {% for problem in assignment.problems %}
+            <div class="details-content">
+                <p><strong>Problem Name:</strong> {{ problem.name }}</p>
+                <p><strong>Link:</strong> <a href="{{ problem.link }}" target="_blank">{{ problem.platform }} #{{ problem.id }}</a></p>
+                <p><strong>Difficulty:</strong> <span class="difficulty {{ problem.difficulty }}">{{ problem.difficulty | capitalize }}</span></p>
+            </div>
+            {% endfor %}
+        </section>
+
+        <!-- Submission Analysis -->
+        <section class="submission-analysis">
+            <h2>Submission Analysis</h2>
+            {% if submission_data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Solved</th>
+                        <th>Time Complexity</th>
+                        <th>Space Complexity</th>
+                        <th>Execution Time (ms)</th>
+                        <th>Code Length (chars)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submission_data %}
+                    <tr>
+                        <td>{{ submission.student }}</td>
+                        <td>{{ "Yes" if submission.solved else "No" }}</td>
+                        <td>{{ submission.time_complexity }}</td>
+                        <td>{{ submission.space_complexity }}</td>
+                        <td>{{ submission.execution_time_ms }}</td>
+                        <td>{{ submission.code_length }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No submissions yet.</p>
+            {% endif %}
+            <div class="analysis-metrics">
+                <p><strong>Average Execution Time:</strong> {{ "%.2f" | format((submission_data | map(attribute='execution_time_ms') | sum) / (submission_data | length) if submission_data else 0) }} ms</p>
+                <p><strong>Average Code Length:</strong> {{ "%.2f" | format((submission_data | map(attribute='code_length') | sum) / (submission_data | length) if submission_data else 0) }} chars</p>
+                <p><strong>Optimal Time Complexity:</strong> O(log n) (based on problem requirements)</p>
+                <p><strong>Optimal Space Complexity:</strong> O(1) (based on problem requirements)</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

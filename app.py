@@ -1,13 +1,14 @@
 import bcrypt
 import requests
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, request, render_template, redirect, session, flash
+from flask import Flask, request, render_template, redirect, session, flash, url_for
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.secret_key = 'secret_key'  # Should be a secure random key in production
 db = SQLAlchemy(app)
-app.secret_key = 'secret_key'
 
+# User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -28,23 +29,23 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
+# Create database tables
 with app.app_context():
     db.create_all()
 
+# Fetch LeetCode data
 def get_leetcode_data(username):
     url = f"https://leetcode-stats-api.herokuapp.com/{username}"
     try:
-        response = requests.get(url, timeout=5)  # Add a timeout
+        response = requests.get(url, timeout=5)
         print("Status of Response:", response.status_code)
-        
         if response.status_code == 200:
             return response.json()
     except requests.RequestException as e:
         print("Error fetching LeetCode data:", e)
-    
-    return None  # Return None if API fails
+    return None
 
-
+# Routes
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -91,7 +92,9 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     if 'email' not in session:
+        flash('Please login to access the dashboard.', 'danger')
         return redirect('/login')
+    
     user = User.query.filter_by(email=session['email']).first()
     if user.role == 'teacher':
         return render_template('TeacherDashboard.html')
@@ -100,7 +103,6 @@ def dashboard():
         if user.leetcode:
             username = user.leetcode.split("/")[-2]  # Extract LeetCode username from URL
             leetcode_data = get_leetcode_data(username)
-        
         return render_template('StudentDashboard.html', user=user, leetcode_data=leetcode_data)
 
 # Dummy student data (replace with actual database queries)
@@ -124,31 +126,204 @@ students = [
 
 @app.route('/students')
 def student_list():
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a teacher to access this page.', 'danger')
+        return redirect('/login')
     return render_template('StudentList.html', students=students)
 
 @app.route('/student/<int:student_id>')
 def student_profile(student_id):
-    # Find the student by ID (replace with actual database query)
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a teacher to access this page.', 'danger')
+        return redirect('/login')
     student = next((s for s in students if s["id"] == student_id), None)
     if student:
         return render_template('StudentProfile.html', student=student)
     return "Student not found", 404
 
-@app.route('/assignment')
-def assignment():
-    return render_template('AssignmentPage.html')
+# Fake problem data
+problems = [
+    {
+        "id": "704",
+        "name": "Binary Search Implementation",
+        "link": "https://leetcode.com/problems/binary-search/",
+        "platform": "LeetCode",
+        "difficulty": "easy",
+        "due_date": "2 days left",
+        "status": "in-progress",
+        "description": "Given a sorted array of integers and a target value, find the index of the target using binary search. If the target is not present, return -1."
+    },
+    {
+        "id": "QST101",
+        "name": "Quick Sort Algorithm",
+        "link": "https://www.hackerrank.com/challenges/quicksort",
+        "platform": "HackerRank",
+        "difficulty": "medium",
+        "due_date": "5 days left",
+        "status": "not-started",
+        "description": "Implement the quicksort algorithm to sort an array of integers in ascending order."
+    },
+    {
+        "id": "GT202",
+        "name": "Graph Traversal",
+        "link": "https://codeforces.com/problemset/problem/202",
+        "platform": "Codeforces",
+        "difficulty": "hard",
+        "due_date": "1 week left",
+        "status": "completed",
+        "description": "Perform a depth-first search (DFS) on a given graph to find all connected components."
+    }
+]
 
-@app.route('/student_assignment')
-def student_assignment():
-    return render_template('StudentAssignment.html')
+@app.route('/student_assignments')
+def student_assignments():
+    if 'email' not in session or session['role'] != 'student':
+        flash('Please login as a student to access this page.', 'danger')
+        return redirect('/login')
+    return render_template('StudentAssignment.html', problems=problems)
+
+@app.route('/problem/<problem_id>')
+def problem_detail(problem_id):
+    if 'email' not in session or session['role'] != 'student':
+        flash('Please login as a student to access this page.', 'danger')
+        return redirect('/login')
+    problem = next((p for p in problems if p['id'] == problem_id), None)
+    if not problem:
+        return "Problem not found", 404
+    return render_template('ProblemDetail.html', problem=problem)
+
+@app.route('/problem/<problem_id>/submit', methods=['POST'])
+def submit_code(problem_id):
+    if 'email' not in session or session['role'] != 'student':
+        flash('Please login as a student to access this page.', 'danger')
+        return redirect('/login')
+    code = request.form.get('code')
+    # Process the code submission (e.g., save to database, evaluate, etc.)
+    print(f"Received code for problem {problem_id}:\n{code}")
+    flash('Code submitted successfully!', 'success')
+    return redirect(url_for('problem_detail', problem_id=problem_id))
+
+# Fake assignment data
+assignments = [
+    {
+        "id": "AST001",
+        "name": "Binary Search Trees",
+        "due_date": "Mar 15, 2025",
+        "completion_rate": 60,
+        "status": "active",
+        "problems": [
+            {"id": "704", "name": "Binary Search Implementation", "link": "https://leetcode.com/problems/binary-search/", "platform": "LeetCode", "difficulty": "easy"}
+        ]
+    },
+    {
+        "id": "AST002",
+        "name": "Graph Algorithms",
+        "due_date": "Mar 20, 2025",
+        "completion_rate": 30,
+        "status": "active",
+        "problems": [
+            {"id": "GPH101", "name": "Graph Traversal", "link": "https://codeforces.com/problemset/problem/202", "platform": "Codeforces", "difficulty": "hard"}
+        ]
+    },
+    {
+        "id": "AST003",
+        "name": "Dynamic Programming",
+        "due_date": "Mar 25, 2025",
+        "completion_rate": 10,
+        "status": "due-soon",
+        "problems": [
+            {"id": "DP202", "name": "Knapsack Problem", "link": "https://leetcode.com/problems/0-1-knapsack/", "platform": "LeetCode", "difficulty": "medium"}
+        ]
+    }
+]
+
+# Fake student submission data
+submissions = {
+    "704": [
+        {"student": "Alice", "solved": True, "time_complexity": "O(log n)", "space_complexity": "O(1)", "execution_time_ms": 25, "code_length": 150},
+        {"student": "Bob", "solved": False, "time_complexity": "O(n)", "space_complexity": "O(n)", "execution_time_ms": 50, "code_length": 200},
+        {"student": "Charlie", "solved": True, "time_complexity": "O(log n)", "space_complexity": "O(1)", "execution_time_ms": 20, "code_length": 130}
+    ],
+    "GPH101": [
+        {"student": "Alice", "solved": True, "time_complexity": "O(V + E)", "space_complexity": "O(V)", "execution_time_ms": 80, "code_length": 300},
+        {"student": "Bob", "solved": False, "time_complexity": "O(V^2)", "space_complexity": "O(V^2)", "execution_time_ms": 120, "code_length": 400}
+    ],
+    "DP202": [
+        {"student": "Charlie", "solved": False, "time_complexity": "O(2^n)", "space_complexity": "O(n)", "execution_time_ms": 200, "code_length": 250}
+    ]
+}
+
+@app.route('/teacher_assignments')
+def teacher_assignments():
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a teacher to access this page.', 'danger')
+        return redirect('/login')
+    return render_template('AssignmentPage.html', assignments=assignments)
+
+@app.route('/assignment/<assignment_id>')
+def assignment_detail_teacher(assignment_id):
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a teacher to access this page.', 'danger')
+        return redirect('/login')
+    assignment = next((a for a in assignments if a['id'] == assignment_id), None)
+    if not assignment:
+        return "Assignment not found", 404
+    # Get submission data for the first problem in the assignment (for simplicity)
+    problem_id = assignment['problems'][0]['id']
+    submission_data = submissions.get(problem_id, [])
+    solved_count = sum(1 for s in submission_data if s['solved'])
+    total_students = len(submission_data)
+    return render_template('AssignmentDetailTeacher.html', assignment=assignment, submission_data=submission_data, solved_count=solved_count, total_students=total_students)
+
+@app.route('/assignment/<assignment_id>/update_deadline', methods=['POST'])
+def update_deadline(assignment_id):
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a teacher to access this page.', 'danger')
+        return redirect('/login')
+    new_date = request.form.get('new-deadline')
+    if new_date:
+        assignment = next((a for a in assignments if a['id'] == assignment_id), None)
+        if assignment:
+            assignment['due_date'] = new_date
+            flash('Deadline updated successfully!', 'success')
+            return redirect(url_for('teacher_assignments'))
+    flash('Failed to update deadline.', 'danger')
+    return redirect(url_for('teacher_assignments'))
+
+@app.route('/assignment/<assignment_id>/archive', methods=['POST'])
+def archive_assignment(assignment_id):
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a teacher to access this page.', 'danger')
+        return redirect('/login')
+    assignment = next((a for a in assignments if a['id'] == assignment_id), None)
+    if assignment:
+        assignment['status'] = 'archived'
+        flash('Assignment archived successfully!', 'success')
+    else:
+        flash('Assignment not found.', 'danger')
+    return redirect(url_for('teacher_assignments'))
+
+@app.route('/assignment/<assignment_id>/delete', methods=['POST'])
+def delete_assignment(assignment_id):
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a teacher to access this page.', 'danger')
+        return redirect('/login')
+    global assignments
+    assignments = [a for a in assignments if a['id'] != assignment_id]
+    flash('Assignment deleted successfully!', 'success')
+    return redirect(url_for('teacher_assignments'))
 
 @app.route('/analytics')
-def studentAnalysis():
+def student_analysis():
+    if 'email' not in session or session['role'] != 'teacher':
+        flash('Please login as a student to access this page.', 'danger')
+        return redirect('/login')
     return render_template('AnalyticsPage.html')
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     if 'email' not in session:
+        flash('Please login to access this page.', 'danger')
         return redirect('/login')
     
     user = User.query.filter_by(email=session['email']).first()
@@ -171,4 +346,3 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
-# just to check if the commit is working

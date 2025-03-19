@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignments - DSA Progress Hub</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/StudentAssignment.css') }}">
+    <title>{{ problem.name }} - DSA Progress Hub</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/ProblemDetail.css') }}">
 </head>
 <body>
     <!-- Sidebar -->
@@ -32,40 +32,34 @@
     <!-- Main Content -->
     <main class="main-content">
         <header>
-            <h1>Assignments</h1>
+            <h1>{{ problem.name }}</h1>
             <div class="header-actions">
-                <a href="/dashboard" class="btn btn-secondary">
-                    Back
+                <a href="/student_assignments" class="btn btn-secondary">
+                    Back to Assignments
                 </a>
-                <input type="text" class="search-bar" placeholder="Search assignments...">
             </div>
         </header>
 
-        <!-- Assignments Table -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Problem Links</th>
-                        <th>Difficulty</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for problem in problems %}
-                    <tr>
-                        <td>{{ problem.name }}</td>
-                        <td><a href="/problem/{{ problem.id }}">{{ problem.platform }} #{{ problem.id }}</a></td>
-                        <td><span class="difficulty {{ problem.difficulty }}">{{ problem.difficulty | capitalize }}</span></td>
-                        <td>{{ problem.due_date }}</td>
-                        <td><span class="status {{ problem.status }}">{{ problem.status | replace('-', ' ') | capitalize }}</span></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <!-- Problem Details -->
+        <section class="problem-details">
+            <h2>Problem Details</h2>
+            <div class="details-content">
+                <p><strong>Link:</strong> <a href="{{ problem.link }}" target="_blank">{{ problem.platform }} #{{ problem.id }}</a></p>
+                <p><strong>Difficulty:</strong> <span class="difficulty {{ problem.difficulty }}">{{ problem.difficulty | capitalize }}</span></p>
+                <p><strong>Description:</strong></p>
+                <p>{{ problem.description }}</p>
+            </div>
+        </section>
+
+        <!-- Code Submission -->
+        <section class="code-submission">
+            <h2>Submit Your Solution</h2>
+            <form method="POST" action="/problem/{{ problem.id }}/submit">
+                <label for="code-input">Your Code:</label>
+                <textarea id="code-input" name="code" rows="10" placeholder="Write your code here..."></textarea>
+                <button type="submit" class="btn btn-primary">Submit Code</button>
+            </form>
+        </section>
     </main>
 </body>
 </html>

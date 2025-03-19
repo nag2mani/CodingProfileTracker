@@ -18,7 +18,7 @@
         <nav class="sidebar-nav">
             <ul>
                 <li class="active">
-                    <a href="#">
+                    <a href="/teacher_assignments">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#F9A8A8"/>
                         </svg>
@@ -58,66 +58,32 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for assignment in assignments %}
                     <tr>
-                        <td>Binary Search Trees</td>
-                        <td>Mar 15, 2025</td>
-                        <td><div class="progress-bar"><span style="width: 60%;"></span></div></td>
-                        <td><span class="status active">Active</span></td>
+                        <td><a href="/assignment/{{ assignment.id }}">{{ assignment.name }}</a></td>
+                        <td>{{ assignment.due_date }}</td>
+                        <td><div class="progress-bar"><span style="width: {{ assignment.completion_rate }}%;"></span></div></td>
+                        <td><span class="status {{ assignment.status }}">{{ assignment.status | replace('-', ' ') | capitalize }}</span></td>
                         <td>
                             <div class="action-dropdown">
                                 <span class="actions" onclick="toggleDropdown(this)">⋮</span>
-                                <div class="dropdown-content" id="dropdown-1">
-                                    <form class="update-deadline" onsubmit="updateDeadline(event, this, 'Mar 15, 2025')">
+                                <div class="dropdown-content" id="dropdown-{{ loop.index }}">
+                                    <form class="update-deadline" action="/assignment/{{ assignment.id }}/update_deadline" method="POST">
                                         <input type="date" name="new-deadline" required>
                                         <button type="submit">Update</button>
                                     </form>
-                                    <a href="#" onclick="viewDetails('Binary Search Trees')">View Details</a>
-                                    <a href="#" onclick="archiveAssignment('Binary Search Trees')">Archive</a>
-                                    <a href="#" onclick="deleteAssignment('Binary Search Trees')">Delete</a>
+                                    <a href="#" onclick="viewDetails('{{ assignment.id }}')">View Details</a>
+                                    <form action="/assignment/{{ assignment.id }}/archive" method="POST" onsubmit="return confirm('Are you sure you want to archive {{ assignment.name }}?')">
+                                        <button type="submit">Archive</button>
+                                    </form>
+                                    <form action="/assignment/{{ assignment.id }}/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete {{ assignment.name }}? This action cannot be undone.')">
+                                        <button type="submit">Delete</button>
+                                    </form>
                                 </div>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td>Graph Algorithms</td>
-                        <td>Mar 20, 2025</td>
-                        <td><div class="progress-bar"><span style="width: 30%;"></span></div></td>
-                        <td><span class="status active">Active</span></td>
-                        <td>
-                            <div class="action-dropdown">
-                                <span class="actions" onclick="toggleDropdown(this)">⋮</span>
-                                <div class="dropdown-content" id="dropdown-2">
-                                    <form class="update-deadline" onsubmit="updateDeadline(event, this, 'Mar 20, 2025')">
-                                        <input type="date" name="new-deadline" required>
-                                        <button type="submit">Update</button>
-                                    </form>
-                                    <a href="#" onclick="viewDetails('Graph Algorithms')">View Details</a>
-                                    <a href="#" onclick="archiveAssignment('Graph Algorithms')">Archive</a>
-                                    <a href="#" onclick="deleteAssignment('Graph Algorithms')">Delete</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Dynamic Programming</td>
-                        <td>Mar 25, 2025</td>
-                        <td><div class="progress-bar"><span style="width: 10%;"></span></div></td>
-                        <td><span class="status due-soon">Due Soon</span></td>
-                        <td>
-                            <div class="action-dropdown">
-                                <span class="actions" onclick="toggleDropdown(this)">⋮</span>
-                                <div class="dropdown-content" id="dropdown-3">
-                                    <form class="update-deadline" onsubmit="updateDeadline(event, this, 'Mar 25, 2025')">
-                                        <input type="date" name="new-deadline" required>
-                                        <button type="submit">Update</button>
-                                    </form>
-                                    <a href="#" onclick="viewDetails('Dynamic Programming')">View Details</a>
-                                    <a href="#" onclick="archiveAssignment('Dynamic Programming')">Archive</a>
-                                    <a href="#" onclick="deleteAssignment('Dynamic Programming')">Delete</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -133,37 +99,9 @@
             dropdown.style.display = isOpen ? 'none' : 'block';
         }
 
-        function updateDeadline(event, form, currentDate) {
-            event.preventDefault();
-            const newDate = form.querySelector('input[name="new-deadline"]').value;
-            if (newDate) {
-                alert(`Deadline updated from ${currentDate} to ${newDate}`);
-                // Here you would typically send a request to your backend to update the deadline
-                form.querySelector('input[name="new-deadline"]').value = '';
-                toggleDropdown(form.closest('.action-dropdown').querySelector('.actions'));
-            }
-        }
-
-        function viewDetails(assignmentName) {
-            alert(`Viewing details for ${assignmentName}`);
-            // Replace with navigation to a details page, e.g., window.location.href = `/assignment/${assignmentName}`;
+        function viewDetails(assignmentId) {
+            window.location.href = `/assignment/${assignmentId}`;
             toggleDropdown(event.target.closest('.action-dropdown').querySelector('.actions'));
-        }
-
-        function archiveAssignment(assignmentName) {
-            if (confirm(`Are you sure you want to archive ${assignmentName}?`)) {
-                alert(`${assignmentName} has been archived`);
-                // Here you would send a request to your backend to archive the assignment
-                toggleDropdown(event.target.closest('.action-dropdown').querySelector('.actions'));
-            }
-        }
-
-        function deleteAssignment(assignmentName) {
-            if (confirm(`Are you sure you want to delete ${assignmentName}? This action cannot be undone.`)) {
-                alert(`${assignmentName} has been deleted`);
-                // Here you would send a request to your backend to delete the assignment
-                toggleDropdown(event.target.closest('.action-dropdown').querySelector('.actions'));
-            }
         }
 
         // Close dropdown when clicking outside
