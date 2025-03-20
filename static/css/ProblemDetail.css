@@ -187,6 +187,7 @@ body {
     padding: 24px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
 }
 
 .code-submission h2 {
@@ -223,6 +224,42 @@ body {
 
 .code-submission button {
     display: block;
+}
+
+/* Code Analysis Section */
+.code-analysis {
+    background-color: #F7F7F7; /* Soft Gray */
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.code-analysis h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.code-analysis h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.analysis-content p {
+    margin-bottom: 12px;
+}
+
+.analysis-content ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 16px;
+}
+
+.analysis-content li {
+    margin-bottom: 8px;
 }
 
 /* Responsive Design */
@@ -265,7 +302,7 @@ body {
         font-size: 20px;
     }
 
-    .problem-details, .code-submission {
+    .problem-details, .code-submission, .code-analysis {
         padding: 16px;
     }
 }

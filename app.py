@@ -2,11 +2,17 @@ import bcrypt
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, render_template, redirect, session, flash, url_for
+from code_analyzer import CodeAnalyzer
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['GEMINI_API_KEY'] = 'AIzaSyBPACYeOCfWLExbKVFd3r64IR3KhcVo-CQ'
 app.secret_key = 'secret_key'  # Should be a secure random key in production
 db = SQLAlchemy(app)
+
+with app.app_context():  # Activate the app context
+    code_analyzer = CodeAnalyzer()
+
 
 # User model
 class User(db.Model):
@@ -197,11 +203,35 @@ def submit_code(problem_id):
     if 'email' not in session or session['role'] != 'student':
         flash('Please login as a student to access this page.', 'danger')
         return redirect('/login')
+    
+    problem = next((p for p in problems if p['id'] == problem_id), None)
+    if not problem:
+        return "Problem not found", 404
+    
     code = request.form.get('code')
-    # Process the code submission (e.g., save to database, evaluate, etc.)
-    print(f"Received code for problem {problem_id}:\n{code}")
-    flash('Code submitted successfully!', 'success')
+    if not code:
+        flash('No code submitted.', 'danger')
+        return redirect(url_for('problem_detail', problem_id=problem_id))
+    
+    # Prepare code data for analysis
+    code_data = {
+        'question_title': problem['name'],
+        'question_description': problem['description'],
+        'language': 'Python',  # Assuming Python for now; you can make this dynamic
+        'code': code
+    }
+    
+    try:
+        # Analyze the code using CodeAnalyzer
+        analysis_result = code_analyzer.analyze_code(code_data)
+        # Store the analysis result in the session
+        session[f'analysis_result_{problem_id}'] = analysis_result
+        flash('Code submitted and analyzed successfully!', 'success')
+    except Exception as e:
+        flash(f'Code analysis failed: {str(e)}', 'danger')
+    
     return redirect(url_for('problem_detail', problem_id=problem_id))
+
 
 # Fake assignment data
 assignments = [
