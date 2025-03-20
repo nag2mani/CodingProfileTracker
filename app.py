@@ -6,7 +6,7 @@ from code_analyzer import CodeAnalyzer
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['GEMINI_API_KEY'] = 'AIzaSyBPACYeOCfWLExbKVFd3r64IR3KhcVo-CQ'
+app.config['GEMINI_API_KEY'] = 'your api key'
 app.secret_key = 'secret_key'  # Should be a secure random key in production
 db = SQLAlchemy(app)
 
