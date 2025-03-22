@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <script>
+        function toggleFields() {
+            const role = document.getElementById('role').value;
+            const studentFields = document.getElementById('studentFields');
+
+            if (role === 'student') {
+                studentFields.style.display = 'block';
+            } else {
+                studentFields.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Register</h2>
+    <form method="POST" action="{{ url_for('register') }}">
+        <input type="text" name="name" placeholder="Full Name" required /><br>
+        <input type="email" name="email" placeholder="Email" required /><br>
+        <input type="password" name="password" placeholder="Password" required /><br>
+
+        <select id="role" name="role" onchange="toggleFields()" required>
+            <option value="" disabled selected>Select Role</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+        </select><br>
+
+        <!-- Fields visible only for Students -->
+        <div id="studentFields" style="display: none;">
+            <input type="text" name="leetcode" placeholder="LeetCode Profile" /><br>
+            <input type="text" name="github" placeholder="GitHub Profile" /><br>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+</body>
+</html>

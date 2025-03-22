@@ -1,6 +1,10 @@
-email:test@gmail.com
-pass: test
+Testing Login Details;
+1. kushal@sitare.org, kushal@sitare.org, Teacher
+2. nag2mani@gmail.com, test@gmail.com, Student
+3. ashutosh@gmail.com, ashutosh@gmail.com, Student
+4. shadab@gmail.com, shadab@gmail.com, Student
 
+Create Seesion : python -c 'import secrets; print(secrets.token_hex(16))'
 
 API-1: https://leetcode-stats-api.herokuapp.com/nag2mani
 Output: {
