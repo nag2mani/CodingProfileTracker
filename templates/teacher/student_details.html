@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ student.name }}'s Details</h1>
+        <div class="cards">
+            <div class="card">
+                <h3>Rank</h3>
+                <p>{{ leetcode_data['ranking'] }}</p>
+            </div>
+            <div class="card">
+                <h3>Total Solved</h3>
+                <p>{{ leetcode_data['totalSolved'] }} / {{ leetcode_data['totalQuestions'] }}</p>
+            </div>
+            <div class="card">
+                <h3>Acceptance Rate</h3>
+                <p>{{ leetcode_data['acceptanceRate'] }}%</p>
+            </div>
+            <div class="card">
+                <h3>Contribution Points</h3>
+                <p>{{ leetcode_data['contributionPoints'] }}</p>
+            </div>
+        </div>
+        <a href="{{ url_for('teacher_dashboard') }}">Back to Dashboard</a>
+    </div>
+</body>
+</html>

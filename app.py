@@ -4,6 +4,7 @@ import requests
 from flask_session import Session
 from supabase import create_client, Client
 from flask import Flask, request, redirect, url_for, session, render_template, flash
+from leetcode_api import get_leetcode_data
 
 app = Flask(__name__)
 
@@ -81,31 +82,49 @@ def student_dashboard():
         response = supabase.from_('users').select('*').eq('id', session['user_id']).execute()
         if response.data:
             user = response.data[0]
-            return render_template('student/dashboard.html', user=user)
+            leetcode_data1 = {}
+
+            try:
+                url = user.get('leetcode')
+                if url:
+                    username = url.rstrip('/').split("/")[-1]
+                    leetcode_data1 = get_leetcode_data(username) or {
+                        'ranking': 'N/A',
+                        'totalSolved': 0,
+                        'totalQuestions': 0,
+                        'easySolved': 0,
+                        'totalEasy': 0,
+                        'mediumSolved': 0,
+                        'totalMedium': 0,
+                        'hardSolved': 0,
+                        'totalHard': 0,
+                        'acceptanceRate': 0,
+                        'contributionPoints': 0,
+                        'reputation': 0,
+                    }
+                else:
+                    leetcode_data1 = {
+                        'ranking': 'No Link Provided',
+                        'totalSolved': 0,
+                        'totalQuestions': 0,
+                        'easySolved': 0,
+                        'totalEasy': 0,
+                        'mediumSolved': 0,
+                        'totalMedium': 0,
+                        'hardSolved': 0,
+                        'totalHard': 0,
+                        'acceptanceRate': 0,
+                        'contributionPoints': 0,
+                        'reputation': 0,
+                    }
+            except Exception as e:
+                print("Error:", e)
+
+            return render_template('student/dashboard.html', user=user, leetcode_data1=leetcode_data1)
+
     flash('Please log in to access the dashboard.', 'warning')
     return redirect(url_for('login'))
 
-
-@app.route('/edit-profile', methods=['POST'])
-def edit_profile():
-    if 'user_id' in session:
-        name = request.form['name']
-        email = request.form['email']
-        leetcode = request.form.get('leetcode')
-        github = request.form.get('github')
-
-        # Update user info in Supabase
-        supabase.from_('users').update({
-            'name': name,
-            'email': email,
-            'leetcode': leetcode,
-            'github': github
-        }).eq('id', session['user_id']).execute()
-
-        flash('Profile updated successfully!', 'success')
-        return redirect(url_for('student_dashboard'))
-    flash('Please log in to update profile.', 'warning')
-    return redirect(url_for('login'))
 
 
 @app.route('/teacher/dashboard')

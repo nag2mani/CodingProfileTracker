@@ -1,6 +1,6 @@
 Testing Login Details;
 1. kushal@sitare.org, kushal@sitare.org, Teacher
-2. nag2mani@gmail.com, test@gmail.com, Student
+2. nag2mani@gmail.com, nag2mani@gmail.com, Student
 3. ashutosh@gmail.com, ashutosh@gmail.com, Student
 4. shadab@gmail.com, shadab@gmail.com, Student
 
@@ -34,3 +34,5 @@ Output: {
 
 
 API Doc: https://colab.research.google.com/drive/1xlqntR2fUHILAeQfid3jLVOBl_9sHPzk?usp=sharing
+
+
