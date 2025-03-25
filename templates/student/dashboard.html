@@ -69,7 +69,11 @@
                                 <p>Deadline: {{ assignment.deadline }}</p>
                             </div>
                             <div class="assignment-actions">
-                                <button class="complete-btn" data-id="{{ assignment.id }}">Mark as Completed</button>
+                                {% if assignment.status == 'completed' %}
+                                    <button class="complete-btn" disabled>Completed ✅</button>
+                                {% else %}
+                                    <button class="complete-btn" data-id="{{ assignment.id }}">Mark as Completed</button>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -81,29 +85,33 @@
         
         
         <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const completeBtns = document.querySelectorAll('.complete-btn');
-        
-            completeBtns.forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const assignmentId = btn.getAttribute('data-id');
-                    try {
-                        const response = await fetch(`/student/complete_assignment/${assignmentId}`, {
-                            method: 'POST',
-                        });
-                        if (response.ok) {
-                            alert('Assignment marked as completed!');
-                            window.location.reload();
-                        } else {
-                            alert('Failed to mark assignment as completed');
+            document.addEventListener('DOMContentLoaded', () => {
+                const completeBtns = document.querySelectorAll('.complete-btn');
+                
+                completeBtns.forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const assignmentId = btn.getAttribute('data-id');
+                        try {
+                            const response = await fetch(`/student/complete_assignment/${assignmentId}`, {
+                                method: 'POST',
+                            });
+            
+                            if (response.ok) {
+                                alert('Assignment marked as completed!');
+                                btn.innerText = 'Completed ✅';
+                                btn.disabled = true;
+                            } else {
+                                const result = await response.json();
+                                alert(result.error || 'Failed to mark assignment as completed');
+                            }
+                        } catch (error) {
+                            console.error(error);
                         }
-                    } catch (error) {
-                        console.error(error);
-                    }
+                    });
                 });
             });
-        });
-        </script>
+            </script>
+            
 
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>

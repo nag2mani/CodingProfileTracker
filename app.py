@@ -1,26 +1,34 @@
 import os
 import bcrypt
 import uuid
+from flask_wtf import CSRFProtect
 from flask_session import Session
 from datetime import datetime
 from supabase import create_client, Client
-from flask import Flask, request, redirect, url_for, session, render_template, flash
+from flask import Flask, request, redirect, url_for, session, render_template, flash, jsonify
 from leetcode_api import get_leetcode_data
-
-app = Flask(__name__)
-
+from supabase import create_client, Client
 from dotenv import load_dotenv
+
+# Load environment variables
 load_dotenv()
 
-# Supabase credentials
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Initialize Flask app
+app = Flask(__name__)
 
 # Flask session config
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['SESSION_TYPE'] = 'filesystem'
+
+# Initialize session and CSRF protection
 Session(app)
+csrf = CSRFProtect(app)
+
+# Initialize Supabase
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 @app.route('/')
 def index():
@@ -118,12 +126,15 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
+# ------------------- Student Dashboard -------------------
 
 @app.route('/student/dashboard')
 def student_dashboard():
     if 'user_id' in session:
-        # Fetch user details from Supabase
-        response = supabase.from_('users').select('*').eq('id', session['user_id']).execute()
+        user_id = session['user_id']
+
+        # Fetch user details
+        response = supabase.from_('users').select('*').eq('id', user_id).execute()
         if response.data:
             user = response.data[0]
             leetcode_data1 = {}
@@ -164,14 +175,32 @@ def student_dashboard():
             except Exception as e:
                 print("Error:", e)
 
-            if 'user_id' in session and session.get('role') == 'student':
-                assignments = (
-                    supabase.from_('assignments')
-                    .select('id, name, deadline, assignment_questions(question_number)')
-                    .order('created_at', desc=True)
-                    .execute()
-                    .data
-                )
+            # Get all assignments
+            assignments = supabase.from_('assignments') \
+                .select('id, name, deadline, created_at') \
+                .order('created_at', desc=True) \
+                .execute().data
+
+            # Get completion status for the logged-in student
+            completed_assignments = supabase.from_('student_assignments') \
+                .select('assignment_id, status') \
+                .eq('student_id', user_id) \
+                .execute().data
+
+            # Convert to a dictionary for faster lookup
+            status_map = {item['assignment_id']: item['status'] for item in completed_assignments}
+
+            # Add status to the assignment list
+            for assignment in assignments:
+                assignment['status'] = status_map.get(assignment['id'], 'pending')
+
+                # Get assignment questions
+                questions = supabase.from_('assignment_questions') \
+                    .select('question_number') \
+                    .eq('assignment_id', assignment['id']) \
+                    .execute().data
+
+                assignment['assignment_questions'] = questions
 
             return render_template('student/dashboard.html', user=user, leetcode_data1=leetcode_data1, assignments=assignments)
 
@@ -179,17 +208,73 @@ def student_dashboard():
     return redirect(url_for('login'))
 
 
-# ------------------- Teacher Dashboard -------------------
+from datetime import datetime
+import uuid
 
-# @app.route('/teacher/dashboard')
-# def teacher_dashboard():
-#     if 'user_id' in session and session.get('role') == 'teacher':
-#         # Fetch all students
-#         response = supabase.from_('users').select('*').eq('role', 'student').execute()
-#         students = response.data
-#         return render_template('teacher/dashboard.html', username=session.get('username'), students=students)
-#     flash('Access denied.', 'danger')
-#     return redirect(url_for('login'))
+@app.route('/student/complete_assignment/<assignment_id>', methods=['POST'])
+def complete_assignment(assignment_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    user_id = session['user_id']
+
+    # Validate assignment_id format
+    try:
+        uuid.UUID(assignment_id)
+    except ValueError:
+        return jsonify({'error': 'Invalid assignment ID'}), 400
+    
+    # Check if assignment exists
+    assignment = supabase.from_('assignments') \
+        .select('id') \
+        .eq('id', assignment_id) \
+        .execute()
+
+    if not assignment.data:
+        return jsonify({'error': 'Assignment not found'}), 404
+
+    # Check if already completed
+    existing = supabase.from_('student_assignments') \
+        .select('*') \
+        .eq('student_id', user_id) \
+        .eq('assignment_id', assignment_id) \
+        .execute()
+
+    if existing.data:
+        if existing.data[0]['status'] == 'completed':
+            # ✅ Allow multiple completions or just return success
+            return jsonify({'success': 'Assignment already completed'}), 200
+        else:
+            # Update the status to 'completed'
+            response = supabase.from_('student_assignments').update({
+                'status': 'completed',
+                'submitted_at': datetime.now().isoformat()
+            }) \
+            .eq('student_id', user_id) \
+            .eq('assignment_id', assignment_id) \
+            .execute()
+
+            if response.error:
+                return jsonify({'error': 'Failed to update assignment'}), 500
+
+            return jsonify({'success': 'Assignment marked as completed'}), 200
+
+    # Insert new record if not already existing
+    response = supabase.from_('student_assignments').insert({
+        'assignment_id': assignment_id,
+        'student_id': user_id,
+        'status': 'completed',
+        'submitted_at': datetime.now().isoformat()
+    }).execute()
+
+    if response.error:
+        return jsonify({'error': 'Failed to mark assignment as completed'}), 500
+
+    return jsonify({'success': 'Assignment marked as completed'}), 200
+
+
+
+# ------------------- Teacher Dashboard -------------------
 
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
@@ -232,6 +317,18 @@ def create_assignment():
         flash('Assignment created!', 'success')
         return redirect(url_for('teacher_dashboard'))
 
+@app.route('/teacher/delete_assignment/<assignment_id>', methods=['POST'])
+def delete_assignment(assignment_id):
+    if 'user_id' in session and session.get('role') == 'teacher':
+        # Delete assignment from the database
+        supabase.from_('assignments').delete().eq('id', assignment_id).execute()
+        # Also delete associated questions
+        supabase.from_('assignment_questions').delete().eq('assignment_id', assignment_id).execute()
+        flash('Assignment deleted!', 'success')
+        return '', 204  # Return no content on successful deletion
+    
+    flash('Failed to delete assignment.', 'danger')
+    return '', 400
 
 
 

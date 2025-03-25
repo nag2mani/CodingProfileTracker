@@ -11,6 +11,7 @@
         <div class="auth-box">
             <h2>Login</h2>
             <form method="POST" action="{{ url_for('login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="input-group">
                     <input type="email" name="email" placeholder="Email" required />
                 </div>
