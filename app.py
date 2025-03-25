@@ -296,7 +296,7 @@ def create_assignment():
             'name': name,
             'created_by': session['user_id'],
             'deadline': deadline,
-            'created_at': datetime.utcnow().isoformat()
+            'created_at': datetime.isoformat()
         }
 
         supabase.from_('assignments').insert(assignment_data).execute()
