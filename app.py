@@ -29,7 +29,6 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-
 @app.route('/')
 def index():
     if 'user_id' in session:
@@ -117,7 +116,6 @@ def login():
             flash('User not found', 'danger')
 
     return render_template('login.html')
-
 
 @app.route('/logout')
 def logout():
@@ -207,10 +205,6 @@ def student_dashboard():
     flash('Please log in to access the dashboard.', 'warning')
     return redirect(url_for('login'))
 
-
-from datetime import datetime
-import uuid
-
 @app.route('/student/complete_assignment/<assignment_id>', methods=['POST'])
 def complete_assignment(assignment_id):
     if 'user_id' not in session:
@@ -233,46 +227,18 @@ def complete_assignment(assignment_id):
     if not assignment.data:
         return jsonify({'error': 'Assignment not found'}), 404
 
-    # Check if already completed
-    existing = supabase.from_('student_assignments') \
-        .select('*') \
-        .eq('student_id', user_id) \
-        .eq('assignment_id', assignment_id) \
-        .execute()
-
-    if existing.data:
-        if existing.data[0]['status'] == 'completed':
-            # ✅ Allow multiple completions or just return success
-            return jsonify({'success': 'Assignment already completed'}), 200
-        else:
-            # Update the status to 'completed'
-            response = supabase.from_('student_assignments').update({
-                'status': 'completed',
-                'submitted_at': datetime.now().isoformat()
-            }) \
-            .eq('student_id', user_id) \
-            .eq('assignment_id', assignment_id) \
-            .execute()
-
-            if response.error:
-                return jsonify({'error': 'Failed to update assignment'}), 500
-
-            return jsonify({'success': 'Assignment marked as completed'}), 200
-
-    # Insert new record if not already existing
-    response = supabase.from_('student_assignments').insert({
+    # Upsert to handle insert or update in one query
+    response = supabase.from_('student_assignments').upsert({
         'assignment_id': assignment_id,
         'student_id': user_id,
         'status': 'completed',
         'submitted_at': datetime.now().isoformat()
     }).execute()
 
-    if response.error:
+    if getattr(response, 'error', None):  # Use getattr to avoid AttributeError
         return jsonify({'error': 'Failed to mark assignment as completed'}), 500
 
     return jsonify({'success': 'Assignment marked as completed'}), 200
-
-
 
 # ------------------- Teacher Dashboard -------------------
 
@@ -329,7 +295,6 @@ def delete_assignment(assignment_id):
     
     flash('Failed to delete assignment.', 'danger')
     return '', 400
-
 
 
 if __name__ == '__main__':

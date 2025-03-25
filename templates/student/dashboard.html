@@ -1,119 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Dashboard</title>
 </head>
+
 <body>
     <div class="container">
-        <!-- Main Content -->
         <div class="main-content">
             <h1>Welcome, {{ user.name }}!</h1>
-            
-            <div class="cards">
-                <div class="card">
-                    <h3>Rank</h3>
-                    <p>{{ leetcode_data1['ranking'] }}</p>
-                </div>
-                <div class="card">
-                    <h3>Total Solved</h3>
-                    <p>{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
-                </div>
-                <div class="card">
-                    <h3>Easy</h3>
-                    <p>{{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }}</p>
-                </div>
-                <div class="card">
-                    <h3>Medium</h3>
-                    <p>{{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium'] }}</p>
-                </div>
-                <div class="card">
-                    <h3>Hard</h3>
-                    <p>{{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard'] }}</p>
-                </div>
-                <div class="card">
-                    <h3>Acceptance Rate</h3>
-                    <p>{{ leetcode_data1['acceptanceRate'] }}%</p>
-                </div>
-                <div class="card">
-                    <h3>Contribution Points</h3>
-                    <p>{{ leetcode_data1['contributionPoints'] }}</p>
-                </div>
-                <div class="card">
-                    <h3>Reputation</h3>
-                    <p>{{ leetcode_data1['reputation'] }}</p>
-                </div>
+            <div>
+                <h3>Rank</h3>
+                <p>{{ leetcode_data1['ranking'] }}</p>
+            </div>
+            <div>
+                <h3>Total Solved</h3>
+                <p>{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
+            </div>
+            <div>
+                <h3>Easy</h3>
+                <p>{{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }}</p>
+            </div>
+            <div>
+                <h3>Medium</h3>
+                <p>{{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium'] }}</p>
+            </div>
+            <div>
+                <h3>Hard</h3>
+                <p>{{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard'] }}</p>
+            </div>
+            <div>
+                <h3>Acceptance Rate</h3>
+                <p>{{ leetcode_data1['acceptanceRate'] }}%</p>
+            </div>
+            <div>
+                <h3>Contribution Points</h3>
+                <p>{{ leetcode_data1['contributionPoints'] }}</p>
+            </div>
+            <div>
+                <h3>Reputation</h3>
+                <p>{{ leetcode_data1['reputation'] }}</p>
             </div>
         </div>
-
 
         <div class="container">
             <h2>Your Assignments</h2>
-            <div class="assignment-list">
-                {% if assignments %}
-                    {% for assignment in assignments %}
-                        <div class="assignment">
-                            <div class="assignment-details">
-                                <h3>{{ assignment.name }}</h3>
-                                {% if assignment.assignment_questions %}
-                                    <p>Leetcode Questions:</p>
-                                    <ul>
-                                        {% for question in assignment.assignment_questions %}
-                                            <li>{{ question.question_number }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <p>No questions assigned.</p>
-                                {% endif %}
-                                <p>Deadline: {{ assignment.deadline }}</p>
-                            </div>
-                            <div class="assignment-actions">
-                                {% if assignment.status == 'completed' %}
-                                    <button class="complete-btn" disabled>Completed ✅</button>
-                                {% else %}
-                                    <button class="complete-btn" data-id="{{ assignment.id }}">Mark as Completed</button>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No assignments available.</p>
+            {% for assignment in assignments %}
+            <div class="assignment">
+                <h3>{{ assignment.name }}</h3>
+                <p>Status: {{ assignment.status }}</p>
+                {% if assignment.status != 'completed' %}
+                <form id="complete-form-{{ assignment.id }}" class="complete-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" data-assignment-id="{{ assignment.id }}">Mark as Completed</button>
+                </form>
                 {% endif %}
             </div>
+            {% endfor %}
         </div>
-        
-        
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const completeBtns = document.querySelectorAll('.complete-btn');
-                
-                completeBtns.forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        const assignmentId = btn.getAttribute('data-id');
-                        try {
-                            const response = await fetch(`/student/complete_assignment/${assignmentId}`, {
-                                method: 'POST',
-                            });
-            
-                            if (response.ok) {
-                                alert('Assignment marked as completed!');
-                                btn.innerText = 'Completed ✅';
-                                btn.disabled = true;
-                            } else {
-                                const result = await response.json();
-                                alert(result.error || 'Failed to mark assignment as completed');
-                            }
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    });
-                });
-            });
-            </script>
-            
-
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
+
+    <script>
+        document.querySelectorAll('.complete-form').forEach(form => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const assignmentId = event.target.querySelector('button').getAttribute('data-assignment-id');
+                const csrfToken = event.target.querySelector('[name="csrf_token"]').value;
+
+                try {
+                    const response = await fetch(`/student/complete_assignment/${assignmentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert(data.success);
+                        location.reload(); // Refresh to update the status
+                    } else {
+                        alert(data.error || 'An error occurred.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to complete assignment.');
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

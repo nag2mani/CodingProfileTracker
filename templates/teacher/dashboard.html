@@ -5,134 +5,122 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teacher Dashboard</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
     <div class="container">
         <h1>Welcome, {{ username }}!</h1>
-        <p>This is your teacher dashboard.</p>
-
-
-        <!-- ----------- -->
-
-        <div class="container">
-            <h2>🎯 Teacher Dashboard</h2>
-
-            <!-- Create Assignment Form -->
-            <form id="create-assignment-form" action="{{ url_for('create_assignment') }}" method="POST">
-                <div class="form-group">
-                    <label for="name">Assignment Name:</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="questions">LeetCode Questions (comma-separated):</label>
-                    <input type="text" id="questions" name="questions" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="deadline">Deadline:</label>
-                    <input type="datetime-local" id="deadline" name="deadline" required>
-                </div>
-
-                <button type="submit">Create Assignment</button>
-            </form>
-
-            <h3>📌 Existing Assignments</h3>
-            <div class="assignment-list">
-                {% if assignments %}
-                {% for assignment in assignments %}
-                <div class="assignment">
-                    <div class="assignment-details">
-                        <h3>{{ assignment.name }}</h3>
-                        <p>Deadline: {{ assignment.deadline }}</p>
-                    </div>
-                    <div class="assignment-actions">
-                        <button class="delete-btn" data-id="{{ assignment.id }}">❌ Delete</button>
-                    </div>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p>No assignments created yet.</p>
-                {% endif %}
+        <form id="create-assignment-form" action="{{ url_for('create_assignment') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="name">Assignment Name:</label>
+                <input type="text" id="name" name="name" required>
             </div>
 
-            <h2>All Students</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>LeetCode</th>
-                        <th>GitHub</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                    <tr>
-                        <td>{{ student.id }}</td>
-                        <td>{{ student.name }}</td>
-                        <td>{{ student.email }}</td>
-                        <td>
-                            {% if student.leetcode %}
-                            <a href="{{ student.leetcode }}" target="_blank">{{ student.leetcode }}</a>
-                            {% else %}
-                            N/A
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if student.github %}
-                            <a href="{{ student.github }}" target="_blank">{{ student.github }}</a>
-                            {% else %}
-                            N/A
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="form-group">
+                <label for="questions">LeetCode Questions (comma-separated):</label>
+                <input type="text" id="questions" name="questions" required>
+            </div>
+
+            <div class="form-group">
+                <label for="deadline">Deadline:</label>
+                <input type="datetime-local" id="deadline" name="deadline" required>
+            </div>
+
+            <button type="submit">Create Assignment</button>
+        </form>
+
+        <h3>📌 Existing Assignments</h3>
+        <div class="assignment-list">
+            {% if assignments %}
+            {% for assignment in assignments %}
+            <div class="assignment">
+                <div class="assignment-details">
+                    <h3>{{ assignment.name }}</h3>
+                    <p>Deadline: {{ assignment.deadline }}</p>
+                </div>
+                <div class="assignment-actions">
+                    <button class="delete-btn" data-id="{{ assignment.id }}">❌ Delete</button>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No assignments created yet.</p>
+            {% endif %}
         </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const deleteBtns = document.querySelectorAll('.delete-btn');
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                deleteBtns.forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        const assignmentId = btn.getAttribute('data-id');
-
-                        if (confirm('Are you sure you want to delete this assignment?')) {
-                            try {
-                                const response = await fetch(`/teacher/delete_assignment/${assignmentId}`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-Token': csrfToken,  // Send the CSRF token
-                                    },
-                                });
-
-                                if (response.ok) {
-                                    alert('Assignment deleted!');
-                                    window.location.reload();
-                                } else {
-                                    alert('Failed to delete assignment');
-                                }
-                            } catch (error) {
-                                console.error(error);
-                            }
-                        }
-                    });
-                });
-            });
-
-
-        </script>
+        <h2>All Students</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>LeetCode</th>
+                    <th>GitHub</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>
+                        {% if student.leetcode %}
+                        <a href="{{ student.leetcode }}" target="_blank">{{ student.leetcode }}</a>
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.github %}
+                        <a href="{{ student.github }}" target="_blank">{{ student.github }}</a>
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const assignmentId = btn.getAttribute('data-id');
+
+                    if (confirm('Are you sure you want to delete this assignment?')) {
+                        try {
+                            const response = await fetch(`/teacher/delete_assignment/${assignmentId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-Token': csrfToken,  // Send the CSRF token
+                                },
+                            });
+
+                            if (response.ok) {
+                                alert('Assignment deleted!');
+                                window.location.reload();
+                            } else {
+                                alert('Failed to delete assignment');
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
