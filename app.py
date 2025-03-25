@@ -242,15 +242,6 @@ def complete_assignment(assignment_id):
 
 # ------------------- Teacher Dashboard -------------------
 
-# @app.route('/teacher/dashboard')
-# def teacher_dashboard():
-#     if 'user_id' in session and session.get('role') == 'teacher':
-#         students = supabase.from_('users').select('*').eq('role', 'student').execute().data
-#         assignments = supabase.from_('assignments').select('*').eq('created_by', session['user_id']).execute().data
-#         return render_template('teacher/dashboard.html', username=session.get('username'), students=students, assignments=assignments)
-#     flash('Access denied.', 'danger')
-#     return redirect(url_for('login'))
-
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
     if 'user_id' in session and session.get('role') == 'teacher':
