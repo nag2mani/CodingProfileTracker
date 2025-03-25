@@ -75,6 +75,49 @@ def register():
 
     return render_template('register.html')
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if not email or not password:
+            flash('Please fill out all fields.', 'danger')
+            return redirect(url_for('login'))
+
+        # Fetch user from database
+        response = supabase.from_('users').select('*').eq('email', email).execute()
+
+        if response.data:
+            user = response.data[0]
+            if bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
+                session['user_id'] = user['id']
+                session['username'] = user['name']
+                session['role'] = user['role']  # Store role in session
+                flash('Login successful!', 'success')
+
+                # Redirect based on user role
+                if user['role'] == 'student':
+                    return redirect(url_for('student_dashboard'))
+                elif user['role'] == 'teacher':
+                    return redirect(url_for('teacher_dashboard'))
+            else:
+                flash('Invalid password', 'danger')
+        else:
+            flash('User not found', 'danger')
+
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    session.pop('username', None)
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
+
+
 @app.route('/student/dashboard')
 def student_dashboard():
     if 'user_id' in session:
@@ -126,7 +169,6 @@ def student_dashboard():
     return redirect(url_for('login'))
 
 
-
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
     if 'user_id' in session and session.get('role') == 'teacher':
@@ -135,47 +177,6 @@ def teacher_dashboard():
         students = response.data
         return render_template('teacher/dashboard.html', username=session.get('username'), students=students)
     flash('Access denied.', 'danger')
-    return redirect(url_for('login'))
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        if not email or not password:
-            flash('Please fill out all fields.', 'danger')
-            return redirect(url_for('login'))
-
-        # Fetch user from database
-        response = supabase.from_('users').select('*').eq('email', email).execute()
-
-        if response.data:
-            user = response.data[0]
-            if bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
-                session['user_id'] = user['id']
-                session['username'] = user['name']
-                session['role'] = user['role']  # Store role in session
-                flash('Login successful!', 'success')
-
-                # Redirect based on user role
-                if user['role'] == 'student':
-                    return redirect(url_for('student_dashboard'))
-                elif user['role'] == 'teacher':
-                    return redirect(url_for('teacher_dashboard'))
-            else:
-                flash('Invalid password', 'danger')
-        else:
-            flash('User not found', 'danger')
-
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.pop('user_id', None)
-    session.pop('username', None)
-    flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
 
