@@ -242,16 +242,54 @@ def complete_assignment(assignment_id):
 
 # ------------------- Teacher Dashboard -------------------
 
+# @app.route('/teacher/dashboard')
+# def teacher_dashboard():
+#     if 'user_id' in session and session.get('role') == 'teacher':
+#         students = supabase.from_('users').select('*').eq('role', 'student').execute().data
+#         assignments = supabase.from_('assignments').select('*').eq('created_by', session['user_id']).execute().data
+#         return render_template('teacher/dashboard.html', username=session.get('username'), students=students, assignments=assignments)
+#     flash('Access denied.', 'danger')
+#     return redirect(url_for('login'))
+
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
     if 'user_id' in session and session.get('role') == 'teacher':
-        response = supabase.from_('users').select('*').eq('role', 'student').execute()
-        students = response.data
+        # Get all students
+        total_students = supabase.from_('users').select('*').eq('role', 'student').execute().data
+        total_students_count = len(total_students)
+
+        # Get all assignments created by the teacher
         assignments = supabase.from_('assignments').select('*').eq('created_by', session['user_id']).execute().data
 
-        return render_template('teacher/dashboard.html', username=session.get('username'), students=students, assignments=assignments)
+        for assignment in assignments:
+            # Get count of completed assignments for each assignment
+            completed_count = supabase.from_('student_assignments') \
+                .select('id') \
+                .eq('assignment_id', assignment['id']) \
+                .eq('status', 'completed') \
+                .execute().data
+
+            assignment['completed_count'] = len(completed_count)
+            assignment['total_students'] = total_students_count
+
+            # Get all questions for this assignment
+            questions = supabase.from_('assignment_questions') \
+                .select('question_number') \
+                .eq('assignment_id', assignment['id']) \
+                .execute().data
+
+            assignment['questions'] = [q['question_number'] for q in questions]  # Extract question numbers
+            
+        return render_template(
+            'teacher/dashboard.html',
+            username=session.get('username'),
+            students=total_students,
+            assignments=assignments
+        )
+    
     flash('Access denied.', 'danger')
     return redirect(url_for('login'))
+
 
 @app.route('/teacher/create_assignment', methods=['POST'])
 def create_assignment():
