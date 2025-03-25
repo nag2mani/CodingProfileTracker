@@ -4,17 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h2>Menu</h2>
-            <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-        </div>
-
         <!-- Main Content -->
         <div class="main-content">
             <h1>Welcome, {{ user.name }}!</h1>
@@ -54,6 +46,66 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="container">
+            <h2>Your Assignments</h2>
+            <div class="assignment-list">
+                {% if assignments %}
+                    {% for assignment in assignments %}
+                        <div class="assignment">
+                            <div class="assignment-details">
+                                <h3>{{ assignment.name }}</h3>
+                                {% if assignment.assignment_questions %}
+                                    <p>Leetcode Questions:</p>
+                                    <ul>
+                                        {% for question in assignment.assignment_questions %}
+                                            <li>{{ question.question_number }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No questions assigned.</p>
+                                {% endif %}
+                                <p>Deadline: {{ assignment.deadline }}</p>
+                            </div>
+                            <div class="assignment-actions">
+                                <button class="complete-btn" data-id="{{ assignment.id }}">Mark as Completed</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No assignments available.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const completeBtns = document.querySelectorAll('.complete-btn');
+        
+            completeBtns.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const assignmentId = btn.getAttribute('data-id');
+                    try {
+                        const response = await fetch(`/student/complete_assignment/${assignmentId}`, {
+                            method: 'POST',
+                        });
+                        if (response.ok) {
+                            alert('Assignment marked as completed!');
+                            window.location.reload();
+                        } else {
+                            alert('Failed to mark assignment as completed');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+        </script>
+
+        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 </body>
 </html>

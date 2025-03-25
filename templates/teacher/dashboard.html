@@ -5,48 +5,199 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teacher Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Welcome, {{ username }}!</h1>
         <p>This is your teacher dashboard.</p>
 
-        <h2>All Students</h2>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>LeetCode</th>
-                    <th>GitHub</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td>{{ student.id }}</td>
-                    <td>{{ student.name }}</td>
-                    <td>{{ student.email }}</td>
-                    <td>
-                        {% if student.leetcode %}
-                        <a href="{{ student.leetcode }}" target="_blank">{{ student.leetcode }}</a>
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if student.github %}
-                        <a href="{{ student.github }}" target="_blank">{{ student.github }}</a>
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+        <!-- ----------- -->
+
+        <div class="container">
+            <h2>🎯 Teacher Dashboard</h2>
+        
+            <!-- Create Assignment Form -->
+            <form id="create-assignment-form" action="{{ url_for('create_assignment') }}" method="POST">
+                <div class="form-group">
+                    <label for="name">Assignment Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+        
+                <div class="form-group">
+                    <label for="questions">LeetCode Questions (comma-separated):</label>
+                    <input type="text" id="questions" name="questions" required>
+                </div>
+        
+                <div class="form-group">
+                    <label for="deadline">Deadline:</label>
+                    <input type="datetime-local" id="deadline" name="deadline" required>
+                </div>
+        
+                <button type="submit">Create Assignment</button>
+            </form>
+        
+            <h3>📌 Existing Assignments</h3>
+            <div class="assignment-list">
+                {% if assignments %}
+                    {% for assignment in assignments %}
+                    <div class="assignment">
+                        <div class="assignment-details">
+                            <h3>{{ assignment.name }}</h3>
+                            <p>Deadline: {{ assignment.deadline }}</p>
+                        </div>
+                        <div class="assignment-actions">
+                            <button class="delete-btn" data-id="{{ assignment.id }}">❌ Delete</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No assignments created yet.</p>
+                {% endif %}
+            </div>
+
+
+            <h2>All Students</h2>
+            <table >
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>LeetCode</th>
+                        <th>GitHub</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>
+                            {% if student.leetcode %}
+                            <a href="{{ student.leetcode }}" target="_blank">{{ student.leetcode }}</a>
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if student.github %}
+                            <a href="{{ student.github }}" target="_blank">{{ student.github }}</a>
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+        
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const assignmentId = btn.getAttribute('data-id');
+                    try {
+                        const response = await fetch(`/teacher/delete_assignment/${assignmentId}`, {
+                            method: 'POST',
+                        });
+                        if (response.ok) {
+                            alert('Assignment deleted!');
+                            window.location.reload();
+                        } else {
+                            alert('Failed to delete assignment');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+        </script>
+        
+        <style>
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        
+        h2, h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        input[type="text"],
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        
+        .assignment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .assignment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .assignment h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .assignment p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .delete-btn:hover {
+            background-color: #ff1a1a;
+        }
+        </style>
+        
+        <!-- ----------- -->
 
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>

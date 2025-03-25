@@ -1,7 +1,8 @@
 import os
 import bcrypt
-import requests
+import uuid
 from flask_session import Session
+from datetime import datetime
 from supabase import create_client, Client
 from flask import Flask, request, redirect, url_for, session, render_template, flash
 from leetcode_api import get_leetcode_data
@@ -163,21 +164,75 @@ def student_dashboard():
             except Exception as e:
                 print("Error:", e)
 
-            return render_template('student/dashboard.html', user=user, leetcode_data1=leetcode_data1)
+            if 'user_id' in session and session.get('role') == 'student':
+                assignments = (
+                    supabase.from_('assignments')
+                    .select('id, name, deadline, assignment_questions(question_number)')
+                    .order('created_at', desc=True)
+                    .execute()
+                    .data
+                )
+
+            return render_template('student/dashboard.html', user=user, leetcode_data1=leetcode_data1, assignments=assignments)
 
     flash('Please log in to access the dashboard.', 'warning')
     return redirect(url_for('login'))
 
 
+# ------------------- Teacher Dashboard -------------------
+
+# @app.route('/teacher/dashboard')
+# def teacher_dashboard():
+#     if 'user_id' in session and session.get('role') == 'teacher':
+#         # Fetch all students
+#         response = supabase.from_('users').select('*').eq('role', 'student').execute()
+#         students = response.data
+#         return render_template('teacher/dashboard.html', username=session.get('username'), students=students)
+#     flash('Access denied.', 'danger')
+#     return redirect(url_for('login'))
+
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
     if 'user_id' in session and session.get('role') == 'teacher':
-        # Fetch all students
         response = supabase.from_('users').select('*').eq('role', 'student').execute()
         students = response.data
-        return render_template('teacher/dashboard.html', username=session.get('username'), students=students)
+        assignments = supabase.from_('assignments').select('*').eq('created_by', session['user_id']).execute().data
+
+        return render_template('teacher/dashboard.html', username=session.get('username'), students=students, assignments=assignments)
     flash('Access denied.', 'danger')
     return redirect(url_for('login'))
+
+@app.route('/teacher/create_assignment', methods=['POST'])
+def create_assignment():
+    if 'user_id' in session and session.get('role') == 'teacher':
+        name = request.form.get('name')
+        question_numbers = request.form.get('questions').split(',')
+        deadline = request.form.get('deadline')
+
+        assignment_id = str(uuid.uuid4())
+
+        assignment_data = {
+            'id': assignment_id,
+            'name': name,
+            'created_by': session['user_id'],
+            'deadline': deadline,
+            'created_at': datetime.utcnow().isoformat()
+        }
+
+        supabase.from_('assignments').insert(assignment_data).execute()
+
+        for q in question_numbers:
+            question_data = {
+                'id': str(uuid.uuid4()),
+                'assignment_id': assignment_id,
+                'question_number': int(q.strip())
+            }
+            supabase.from_('assignment_questions').insert(question_data).execute()
+
+        flash('Assignment created!', 'success')
+        return redirect(url_for('teacher_dashboard'))
+
+
 
 
 if __name__ == '__main__':
