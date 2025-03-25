@@ -33,31 +33,32 @@
         <h3>📌 Existing Assignments</h3>
         <div class="assignment-list">
             {% if assignments %}
-                {% for assignment in assignments %}
-                <div class="assignment">
-                    <div class="assignment-details">
-                        <h3>{{ assignment.name }}</h3>
-                        <p>Deadline: {{ assignment.deadline }}</p>
-                        <p>✅ Completed by {{ assignment.completed_count }} out of {{ assignment.total_students }} students</p>
-                    </div>
-                                    <!-- Display Questions -->
-                <p>📚 Questions: 
+            {% for assignment in assignments %}
+            <div class="assignment">
+                <div class="assignment-details">
+                    <h3>{{ assignment.name }}</h3>
+                    <p>Deadline: {{ assignment.deadline }}</p>
+                    <p>✅ Completed by {{ assignment.completed_count }} out of {{ assignment.total_students }} students
+                    </p>
+                </div>
+                <!-- Display Questions -->
+                <p>📚 Questions:
                     {% if assignment.questions %}
-                        {{ assignment.questions | join(', ') }}
+                    {{ assignment.questions | join(', ') }}
                     {% else %}
-                        No questions assigned.
+                    No questions assigned.
                     {% endif %}
                 </p>
-                    <div class="assignment-actions">
-                        <button class="delete-btn" data-id="{{ assignment.id }}">❌ Delete</button>
-                    </div>
+                <div class="assignment-actions">
+                    <button class="delete-btn" data-id="{{ assignment.id }}">❌ Delete</button>
                 </div>
-                {% endfor %}
+            </div>
+            {% endfor %}
             {% else %}
-                <p>No assignments created yet.</p>
+            <p>No assignments created yet.</p>
             {% endif %}
         </div>
-        
+
 
         <h2>All Students</h2>
         <table>
