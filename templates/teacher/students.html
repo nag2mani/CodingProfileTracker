@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacher/students.css') }}">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar -->
@@ -25,7 +27,7 @@
         <div class="main-content">
             <header>
                 <h1>All Students</h1>
-                <button class="add-student-btn">+ Add Student</button>
+                <button class="add-student-btn">Option</button>
             </header>
 
             <!-- Students Table -->
@@ -33,6 +35,8 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>University Rank</th>
+                            <th>LeetCode Rank</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>LeetCode Profile</th>
@@ -43,15 +47,34 @@
                     <tbody>
                         {% for student in students %}
                         <tr>
+                            <td>{{ loop.index }}</td>
                             <td>
-                                {{ student.name }}
+                                {% if student.leetcode_rank != 'N/A' %}
+                                {{ student.leetcode_rank }}
+                                {% else %}
+                                <span style="color: red;">N/A</span>
+                                {% endif %}
                             </td>
+                            <td>{{ student.name }}</td>
                             <td>{{ student.email }}</td>
-                            <td><a href="{{ student.leetcode }}" target="_blank">@{{ student.leetcode.rstrip('/').split("/")[-1] }}</a></td>
-                            <td><a href="{{ student.github }}" target="_blank">@{{ student.github.rstrip('/').split("/")[-1] }}</a></td>
+
                             <td>
-                                <button class="action-btn">📝</button>
-                                <button class="action-btn">🗑️</button>
+                                {% if student.leetcode %}
+                                <a href="{{ student.leetcode }}" target="_blank">
+                                    @{{ student.leetcode.rstrip('/').split("/")[-1] }}
+                                </a>
+                                {% else %}
+                                <span style="color: gray;">No Profile</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if student.github %}
+                                <a href="{{ student.github }}" target="_blank">
+                                    @{{ student.github.rstrip('/').split("/")[-1] }}
+                                </a>
+                                {% else %}
+                                <span style="color: gray;">No Profile</span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -63,7 +86,9 @@
                 </div>
                 {% endif %}
             </div>
+
         </div>
     </div>
 </body>
+
 </html>

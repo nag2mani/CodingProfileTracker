@@ -266,10 +266,28 @@ def teacher_dashboard():
 def teacher_students():
     if 'user_id' in session and session.get('role') == 'teacher':
         students = supabase.from_('users').select('*').eq('role', 'student').execute().data
+
+        # Fetch LeetCode rank for each student
+        for student in students:
+            leetcode_data = {}
+            try:
+                url = student.get('leetcode')
+                if url:
+                    username = url.rstrip('/').split("/")[-1]
+                    leetcode_data = get_leetcode_data(username) or {}
+                student['leetcode_rank'] = leetcode_data.get('ranking', 'N/A')
+            except Exception as e:
+                student['leetcode_rank'] = 'N/A'
+                print(f"Error fetching LeetCode data for {student['name']}: {e}")
+
+        # Sort students by LeetCode rank (convert 'N/A' to large number to push them to the end)
+        students.sort(key=lambda x: int(x['leetcode_rank']) if x['leetcode_rank'] != 'N/A' else float('inf'))
+
         return render_template('teacher/students.html', students=students)
 
     flash('Access denied.', 'danger')
     return redirect(url_for('login'))
+
 
 
 # ------------------- Assignments Page -------------------
