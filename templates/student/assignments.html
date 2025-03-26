@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduLearn - Assignments</title>
+    <title>Coding Profile Tracker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student/assignments.css') }}">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">EduLearn</div>
+            <div class="logo">CodingProfile</div>
             <nav>
                 <ul>
                     <li><span class="icon">🏠</span> <a href="/student/dashboard">Dashboard</a></li>
                     <li class="active"><span class="icon">📋</span> Assignments</li>
-                    <li><span class="icon">📅</span> Schedule</li>
-                    <li><span class="icon">📈</span> Progress</li>
-                    <li><span class="icon">💬</span> Messages</li>
+                    <li><span class="icon">📅</span> Option-3</li>
+                    <li><span class="icon">📈</span> Option-4</li>
+                    <li><span class="icon">💬</span> Option-5</li>
                     <li class="logout"><span class="icon">🚪</span> <a href="/logout">Logout</a></li>
                 </ul>
             </nav>
@@ -29,16 +31,25 @@
                 <h1>Assignments</h1>
                 <div class="user-avatar">
                     <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
-                </div> 
+                </div>
             </header>
 
             <!-- Assignment Cards -->
             <div class="assignment-grid">
                 {% for assignment in assignments %}
-                <div class="assignment-card {% if assignment.status == 'completed' %}completed{% else %}pending{% endif %}">
+                <div
+                    class="assignment-card {% if assignment.status == 'completed' %}completed{% else %}pending{% endif %}">
                     <h3>{{ assignment.name }}</h3>
                     <p>{{ assignment.description }}</p>
-                    <p>{{ assignment.question_number }}</p>
+                    {% if assignment.assignment_questions %}
+                    <p>Leetcode Questions:
+                        {% for question in assignment.assignment_questions %}
+                        {{ question.question_number }},
+                        {% endfor %}
+                    {% else %}
+                    <p>No questions assigned.</p>
+                    {% endif %}
+                </p>
                     <div class="card-footer">
                         <span>📅 Due {{ assignment.due_date }}</span>
                         {% if assignment.status != 'completed' %}
@@ -90,4 +101,5 @@
         });
     </script>
 </body>
+
 </html>

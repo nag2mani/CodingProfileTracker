@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard</title>
+    <title>Coding Profile Tracker</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacher/dashboard.css') }}">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">EduPlatform</div>
+            <div class="logo">CodingProfile</div>
             <nav>
                 <ul>
                     <li class="active"><span class="icon">🏠</span> Dashboard</li>
@@ -30,17 +32,19 @@
                 </div>
                 <div class="user-avatar">
                     <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
-                </div> 
+                </div>
             </header>
 
             <!-- Placeholder for Main Content -->
             <div class="content-section">
                 <div class="info-card">
                     <h3>Overview</h3>
-                    <p>Use the navigation on the left to manage your assignments and students. Create new assignments, track student progress, and more.</p>
+                    <p>Use the navigation on the left to manage your assignments and students. Create new assignments,
+                        track student progress, and more.</p>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

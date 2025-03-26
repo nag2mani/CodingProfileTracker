@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignments</title>
+    <title>Coding Profile Tracker</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacher/assignments.css') }}">
 
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">TechSpace</div>
+            <div class="logo">CodingProfile</div>
             <nav>
                 <ul>
                     <li><span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a></li>
@@ -30,7 +32,7 @@
                 </div>
                 <div class="user-avatar">
                     <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
-                </div> 
+                </div>
             </header>
 
             <!-- Create New Assignment Form -->
@@ -60,19 +62,21 @@
                 {% for assignment in assignments %}
                 <div class="assignment-card">
                     <h3>{{ assignment.name }}</h3>
-                    <p>📅 Due {{ assignment.deadline }}</p>
-                    <p>✅ Completed by {{ assignment.completed_count }} out of {{ assignment.total_students }} students</p>
-                    <p>Questions:</p>
-                    <ul>
+                    <p> Leetcode Questions:
                         {% if assignment.questions %}
                         {% for question in assignment.questions %}
-                        <li>{{ question }}</li>
+                        {{ question }},
                         {% endfor %}
                         {% else %}
-                        <li>No questions assigned.</li>
+                        No questions assigned.
                         {% endif %}
-                    </ul>
-                    <form method="POST" action="{{ url_for('delete_assignment', assignment_id=assignment.id) }}" class="delete-form">
+                    </p>
+                    <p>📅 Due {{ assignment.deadline }}</p>
+                    <p>✅ Completed by {{ assignment.completed_count }} out of {{ assignment.total_students }} students
+                    </p>
+
+                    <form method="POST" action="{{ url_for('delete_assignment', assignment_id=assignment.id) }}"
+                        class="delete-form">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> <!-- CSRF Token -->
                         <button type="submit" class="delete-btn">🗑️</button>
                     </form>
@@ -87,4 +91,5 @@
         </div>
     </div>
 </body>
+
 </html>
