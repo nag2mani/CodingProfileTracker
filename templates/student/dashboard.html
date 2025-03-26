@@ -1,100 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetStudent - Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student/dashboard.css') }}">
 </head>
-
 <body>
     <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">LeetStudent</div>
+            <nav>
+                <ul>
+                    <li class="active"><span class="icon">🏠</span> Dashboard</li>
+                    <li><span class="icon">📋</span> <a href="/student/assignments">Assignments</a></li>
+                    <li><span class="icon">📅</span> Schedule</li>
+                    <li><span class="icon">📈</span> Progress</li>
+                    <li><span class="icon">💬</span> Messages</li>
+                    <li class="logout"><span class="icon">🚪</span> <a href="/logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
         <div class="main-content">
-            <h1>Welcome, {{ user.name }}!</h1>
-            <div>
-                <h3>Rank</h3>
-                <p>{{ leetcode_data1['ranking'] }}</p>
-            </div>
-            <div>
-                <h3>Total Solved</h3>
-                <p>{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
-            </div>
-            <div>
-                <h3>Easy</h3>
-                <p>{{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }}</p>
-            </div>
-            <div>
-                <h3>Medium</h3>
-                <p>{{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium'] }}</p>
-            </div>
-            <div>
-                <h3>Hard</h3>
-                <p>{{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard'] }}</p>
-            </div>
-            <div>
-                <h3>Acceptance Rate</h3>
-                <p>{{ leetcode_data1['acceptanceRate'] }}%</p>
-            </div>
-            <div>
-                <h3>Contribution Points</h3>
-                <p>{{ leetcode_data1['contributionPoints'] }}</p>
-            </div>
-            <div>
-                <h3>Reputation</h3>
-                <p>{{ leetcode_data1['reputation'] }}</p>
-            </div>
-        </div>
+            <header>
+                <div class="welcome">
+                    <h1>Welcome, {{ user.name }}!</h1>
+                    <p>Let's check your coding progress</p>
+                </div>
+                <div class="user-avatar">
+                    <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
+                </div>                
+            </header>
 
-        <div class="container">
-            <h2>Your Assignments</h2>
-            {% for assignment in assignments %}
-            <div class="assignment">
-                <h3>{{ assignment.name }}</h3>
-                <p>Status: {{ assignment.status }}</p>
-                {% if assignment.status != 'completed' %}
-                <form id="complete-form-{{ assignment.id }}" class="complete-form">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" data-assignment-id="{{ assignment.id }}">Mark as Completed</button>
-                </form>
-                {% endif %}
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <!-- Card 1: Current Rank -->
+                <div class="stats-card">
+                    <h3>Current Rank</h3>
+                    <p class="value">{{ leetcode_data1['ranking'] }}</p>
+                    <span class="change">↑ +5 last week</span>
+                </div>
+
+                <!-- Card 2: Problems Solved -->
+                <div class="stats-card">
+                    <h3>Problems Solved</h3>
+                    <p class="value">{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
+                    <div class="breakdown">
+                        <span>Easy: {{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }}</span>
+                        <span>Medium: {{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium'] }}</span>
+                        <span>Hard: {{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard'] }}</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Acceptance Rate -->
+                <div class="stats-card">
+                    <h3>Acceptance Rate</h3>
+                    <p class="value">{{ leetcode_data1['acceptanceRate'] }}%</p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: {{ leetcode_data1['acceptanceRate'] }}%;"></div>
+                    </div>
+                </div>
             </div>
-            {% endfor %}
+
+            <!-- Contribution and Reputation Section -->
+            <div class="bottom-section">
+                <!-- Contribution Activity -->
+                <div class="contribution-card">
+                    <h3>Contribution Activity</h3>
+                    <p>234 contributions in the last year</p>
+                    <div class="contribution-grid">
+                        <!-- Simplified grid: 5 rows, 10 columns for demo -->
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #7bc96f;"></div>
+                        <div class="grid-square" style="background-color: #239a3b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #7bc96f;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <!-- Repeat for 5 rows (50 squares total) -->
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #239a3b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #7bc96f;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #239a3b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #7bc96f;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #239a3b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #7bc96f;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #239a3b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #7bc96f;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #c6e48b;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                        <div class="grid-square" style="background-color: #ebedf0;"></div>
+                    </div>
+                </div>
+
+                <!-- Reputation & Badges -->
+                <div class="reputation-card">
+                    <h3>Reputation & Badges</h3>
+                    <p class="value">{{ leetcode_data1['reputation'] }}</p>
+                    <p>Reputation points</p>
+                    <div class="badges">
+                        <span class="badge">⭐</span>
+                        <span class="badge">🏆</span>
+                        <span class="badge">🎖️</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
-
-    <script>
-        document.querySelectorAll('.complete-form').forEach(form => {
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const assignmentId = event.target.querySelector('button').getAttribute('data-assignment-id');
-                const csrfToken = event.target.querySelector('[name="csrf_token"]').value;
-
-                try {
-                    const response = await fetch(`/student/complete_assignment/${assignmentId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrfToken
-                        },
-                        body: JSON.stringify({})
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        alert(data.success);
-                        location.reload(); // Refresh to update the status
-                    } else {
-                        alert(data.error || 'An error occurred.');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Failed to complete assignment.');
-                }
-            });
-        });
-    </script>
 </body>
-
 </html>

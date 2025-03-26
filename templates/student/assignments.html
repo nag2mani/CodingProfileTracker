@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLearn - Assignments</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student/assignments.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">EduLearn</div>
+            <nav>
+                <ul>
+                    <li><span class="icon">🏠</span> <a href="/student/dashboard">Dashboard</a></li>
+                    <li class="active"><span class="icon">📋</span> Assignments</li>
+                    <li><span class="icon">📅</span> Schedule</li>
+                    <li><span class="icon">📈</span> Progress</li>
+                    <li><span class="icon">💬</span> Messages</li>
+                    <li class="logout"><span class="icon">🚪</span> <a href="/logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Assignments</h1>
+                <div class="user-avatar">
+                    <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
+                </div> 
+            </header>
+
+            <!-- Assignment Cards -->
+            <div class="assignment-grid">
+                {% for assignment in assignments %}
+                <div class="assignment-card {% if assignment.status == 'completed' %}completed{% else %}pending{% endif %}">
+                    <h3>{{ assignment.name }}</h3>
+                    <p>{{ assignment.description }}</p>
+                    <p>{{ assignment.question_number }}</p>
+                    <div class="card-footer">
+                        <span>📅 Due {{ assignment.due_date }}</span>
+                        {% if assignment.status != 'completed' %}
+                        <button class="mark-complete" data-assignment-id="{{ assignment.id }}">Mark Complete</button>
+                        <span class="status pending">Pending</span>
+                        {% else %}
+                        <span class="status completed">Completed</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not assignments %}
+                <div class="no-assignments">
+                    <p>No assignments available.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.mark-complete').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const assignmentId = event.target.getAttribute('data-assignment-id');
+
+                try {
+                    const response = await fetch(`/student/complete_assignment/${assignmentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert(data.success);
+                        location.reload();
+                    } else {
+                        alert(data.error || 'An error occurred.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to complete assignment.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

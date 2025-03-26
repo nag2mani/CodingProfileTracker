@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacher/assignments.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">TechSpace</div>
+            <nav>
+                <ul>
+                    <li><span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a></li>
+                    <li class="active"><span class="icon">📋</span> Assignments</li>
+                    <li><span class="icon">👥</span> <a href="/teacher/students">Students</a></li>
+                    <li class="logout"><span class="icon">🚪</span> <a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <div class="welcome">
+                    <h1>📌 Assignments</h1>
+                </div>
+                <div class="user-avatar">
+                    <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
+                </div> 
+            </header>
+
+            <!-- Create New Assignment Form -->
+            <div class="form-section">
+                <h2>Create New Assignment</h2>
+                <form id="create-assignment-form" method="POST" action="{{ url_for('create_assignment') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> <!-- CSRF Token -->
+                    <div class="form-group">
+                        <label>Assignment Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Questions (comma-separated)</label>
+                        <input type="text" name="questions" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Deadline</label>
+                        <input type="datetime-local" name="deadline" required>
+                    </div>
+                    <button type="submit">Create Assignment</button>
+                </form>
+            </div>
+
+            <!-- Existing Assignments -->
+            <div class="assignment-grid">
+                {% if assignments %}
+                {% for assignment in assignments %}
+                <div class="assignment-card">
+                    <h3>{{ assignment.name }}</h3>
+                    <p>📅 Due {{ assignment.deadline }}</p>
+                    <p>✅ Completed by {{ assignment.completed_count }} out of {{ assignment.total_students }} students</p>
+                    <p>Questions:</p>
+                    <ul>
+                        {% if assignment.questions %}
+                        {% for question in assignment.questions %}
+                        <li>{{ question }}</li>
+                        {% endfor %}
+                        {% else %}
+                        <li>No questions assigned.</li>
+                        {% endif %}
+                    </ul>
+                    <form method="POST" action="{{ url_for('delete_assignment', assignment_id=assignment.id) }}" class="delete-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> <!-- CSRF Token -->
+                        <button type="submit" class="delete-btn">🗑️</button>
+                    </form>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="no-assignments">
+                    <p>No assignments created yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

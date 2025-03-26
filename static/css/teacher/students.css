@@ -1,0 +1,178 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 200px;
+    background-color: #fff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a73e8;
+    margin-bottom: 30px;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    padding: 15px 10px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+}
+
+nav ul li.active {
+    background-color: #e6f0fa;
+    color: #1a73e8;
+    border-radius: 8px;
+}
+
+nav ul li.logout {
+    color: #d32f2f;
+    margin-top: auto;
+}
+
+nav ul li .icon {
+    margin-right: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 30px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 28px;
+    color: #333;
+}
+
+.add-student-btn {
+    padding: 10px 20px;
+    background-color: #1a73e8;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.add-student-btn:hover {
+    background-color: #1557b0;
+}
+
+/* Students Table */
+.students-table {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #f5f7fa;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    font-size: 14px;
+}
+
+th {
+    color: #777;
+    font-weight: normal;
+}
+
+td {
+    color: #333;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+td a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+    color: #777;
+}
+
+.action-btn:hover {
+    color: #1a73e8;
+}
+
+.action-btn:last-child:hover {
+    color: #d32f2f;
+}
+
+.no-students {
+    padding: 20px;
+    text-align: center;
+}
+
+.no-students p {
+    font-size: 16px;
+    color: #777;
+}

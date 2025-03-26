@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacher/students.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">TeachBoard</div>
+            <nav>
+                <ul>
+                    <li><span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a></li>
+                    <li><span class="icon">📋</span> <a href="/teacher/assignments">Assignments</a></li>
+                    <li class="active"><span class="icon">👥</span> Students</li>
+                    <li class="logout"><span class="icon">🚪</span> <a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>All Students</h1>
+                <button class="add-student-btn">+ Add Student</button>
+            </header>
+
+            <!-- Students Table -->
+            <div class="students-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>LeetCode Profile</th>
+                            <th>GitHub Profile</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>
+                                {{ student.name }}
+                            </td>
+                            <td>{{ student.email }}</td>
+                            <td><a href="{{ student.leetcode }}" target="_blank">@{{ student.leetcode.rstrip('/').split("/")[-1] }}</a></td>
+                            <td><a href="{{ student.github }}" target="_blank">@{{ student.github.rstrip('/').split("/")[-1] }}</a></td>
+                            <td>
+                                <button class="action-btn">📝</button>
+                                <button class="action-btn">🗑️</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if not students %}
+                <div class="no-students">
+                    <p>No students added yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

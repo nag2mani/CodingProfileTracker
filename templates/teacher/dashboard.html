@@ -1,135 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacher/dashboard.css') }}">
 </head>
-
 <body>
     <div class="container">
-        <h1>Welcome, {{ username }}!</h1>
-        <form id="create-assignment-form" action="{{ url_for('create_assignment') }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="form-group">
-                <label for="name">Assignment Name:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-
-            <div class="form-group">
-                <label for="questions">LeetCode Questions (comma-separated):</label>
-                <input type="text" id="questions" name="questions" required>
-            </div>
-
-            <div class="form-group">
-                <label for="deadline">Deadline:</label>
-                <input type="datetime-local" id="deadline" name="deadline" required>
-            </div>
-
-            <button type="submit">Create Assignment</button>
-        </form>
-
-        <h3>📌 Existing Assignments</h3>
-        <div class="assignment-list">
-            {% if assignments %}
-            {% for assignment in assignments %}
-            <div class="assignment">
-                <div class="assignment-details">
-                    <h3>{{ assignment.name }}</h3>
-                    <p>Deadline: {{ assignment.deadline }}</p>
-                    <p>✅ Completed by {{ assignment.completed_count }} out of {{ assignment.total_students }} students
-                    </p>
-                </div>
-                <!-- Display Questions -->
-                <p>📚 Questions:
-                    {% if assignment.questions %}
-                    {{ assignment.questions | join(', ') }}
-                    {% else %}
-                    No questions assigned.
-                    {% endif %}
-                </p>
-                <div class="assignment-actions">
-                    <button class="delete-btn" data-id="{{ assignment.id }}">❌ Delete</button>
-                </div>
-            </div>
-            {% endfor %}
-            {% else %}
-            <p>No assignments created yet.</p>
-            {% endif %}
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">EduPlatform</div>
+            <nav>
+                <ul>
+                    <li class="active"><span class="icon">🏠</span> Dashboard</li>
+                    <li><span class="icon">📋</span> <a href="/teacher/assignments">Assignments</a></li>
+                    <li><span class="icon">👥</span> <a href="/teacher/students">Students</a></li>
+                    <li class="logout"><span class="icon">🚪</span> <a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
         </div>
 
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <div class="welcome">
+                    <h1>Welcome, {{ username }}!</h1>
+                    <p>Manage assignments and students efficiently.</p>
+                </div>
+                <div class="user-avatar">
+                    <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
+                </div> 
+            </header>
 
-        <h2>All Students</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>LeetCode</th>
-                    <th>GitHub</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td>{{ student.name }}</td>
-                    <td>{{ student.email }}</td>
-                    <td>
-                        {% if student.leetcode %}
-                        <a href="{{ student.leetcode }}" target="_blank">{{ student.leetcode }}</a>
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if student.github %}
-                        <a href="{{ student.github }}" target="_blank">{{ student.github }}</a>
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <a href="{{ url_for('logout') }}">Logout</a>
+            <!-- Placeholder for Main Content -->
+            <div class="content-section">
+                <div class="info-card">
+                    <h3>Overview</h3>
+                    <p>Use the navigation on the left to manage your assignments and students. Create new assignments, track student progress, and more.</p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const deleteBtns = document.querySelectorAll('.delete-btn');
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            deleteBtns.forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const assignmentId = btn.getAttribute('data-id');
-
-                    if (confirm('Are you sure you want to delete this assignment?')) {
-                        try {
-                            const response = await fetch(`/teacher/delete_assignment/${assignmentId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-Token': csrfToken,  // Send the CSRF token
-                                },
-                            });
-
-                            if (response.ok) {
-                                alert('Assignment deleted!');
-                                window.location.reload();
-                            } else {
-                                alert('Failed to delete assignment');
-                            }
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    }
-                });
-            });
-        });
-    </script>
 </body>
-
 </html>

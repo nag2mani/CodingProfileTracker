@@ -173,6 +173,20 @@ def student_dashboard():
             except Exception as e:
                 print("Error:", e)
 
+            
+            return render_template('student/dashboard.html', user=user, leetcode_data1=leetcode_data1)
+
+    flash('Please log in to access the dashboard.', 'warning')
+    return redirect(url_for('login'))
+
+@app.route('/student/assignments/')
+def student_assignments():
+    if 'user_id' in session:
+        user_id = session['user_id']
+
+        response = supabase.from_('users').select('*').eq('id', user_id).execute()
+        if response.data:
+            user = response.data[0]
             # Get all assignments
             assignments = supabase.from_('assignments') \
                 .select('id, name, deadline, created_at') \
@@ -199,8 +213,7 @@ def student_dashboard():
                     .execute().data
 
                 assignment['assignment_questions'] = questions
-
-            return render_template('student/dashboard.html', user=user, leetcode_data1=leetcode_data1, assignments=assignments)
+            return render_template('student/assignments.html', user=user, assignments=assignments)
 
     flash('Please log in to access the dashboard.', 'warning')
     return redirect(url_for('login'))
@@ -241,19 +254,37 @@ def complete_assignment(assignment_id):
     return jsonify({'success': 'Assignment marked as completed'}), 200
 
 # ------------------- Teacher Dashboard -------------------
-
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
+    if 'user_id' in session and session.get('role') == 'teacher':
+        return render_template('teacher/dashboard.html', username=session.get('username'))
+    
+    flash('Access denied.', 'danger')
+    return redirect(url_for('login'))
+
+@app.route('/teacher/students')
+def teacher_students():
+    if 'user_id' in session and session.get('role') == 'teacher':
+        students = supabase.from_('users').select('*').eq('role', 'student').execute().data
+        return render_template('teacher/students.html', students=students)
+
+    flash('Access denied.', 'danger')
+    return redirect(url_for('login'))
+
+
+# ------------------- Assignments Page -------------------
+@app.route('/teacher/assignments')
+def assignments_page():
     if 'user_id' in session and session.get('role') == 'teacher':
         # Get all students
         total_students = supabase.from_('users').select('*').eq('role', 'student').execute().data
         total_students_count = len(total_students)
 
-        # Get all assignments created by the teacher
+        # Get assignments created by the teacher
         assignments = supabase.from_('assignments').select('*').eq('created_by', session['user_id']).execute().data
 
         for assignment in assignments:
-            # Get count of completed assignments for each assignment
+            # Count completed assignments
             completed_count = supabase.from_('student_assignments') \
                 .select('id') \
                 .eq('assignment_id', assignment['id']) \
@@ -263,20 +294,15 @@ def teacher_dashboard():
             assignment['completed_count'] = len(completed_count)
             assignment['total_students'] = total_students_count
 
-            # Get all questions for this assignment
+            # Get all questions for the assignment
             questions = supabase.from_('assignment_questions') \
                 .select('question_number') \
                 .eq('assignment_id', assignment['id']) \
                 .execute().data
 
-            assignment['questions'] = [q['question_number'] for q in questions]  # Extract question numbers
-            
-        return render_template(
-            'teacher/dashboard.html',
-            username=session.get('username'),
-            students=total_students,
-            assignments=assignments
-        )
+            assignment['questions'] = [q['question_number'] for q in questions]
+
+        return render_template('teacher/assignments.html', assignments=assignments)
     
     flash('Access denied.', 'danger')
     return redirect(url_for('login'))
@@ -296,7 +322,7 @@ def create_assignment():
             'name': name,
             'created_by': session['user_id'],
             'deadline': deadline,
-            'created_at': datetime.isoformat()
+            'created_at': datetime.now().isoformat()
         }
 
         supabase.from_('assignments').insert(assignment_data).execute()
@@ -310,21 +336,23 @@ def create_assignment():
             supabase.from_('assignment_questions').insert(question_data).execute()
 
         flash('Assignment created!', 'success')
-        return redirect(url_for('teacher_dashboard'))
+        return redirect(url_for('assignments_page'))  # Redirect to assignments page
+
+    flash('Failed to create assignment.', 'danger')
+    return redirect(url_for('assignments_page'))
+
 
 @app.route('/teacher/delete_assignment/<assignment_id>', methods=['POST'])
 def delete_assignment(assignment_id):
     if 'user_id' in session and session.get('role') == 'teacher':
-        # Delete assignment from the database
+        # Delete assignment and related data
         supabase.from_('assignments').delete().eq('id', assignment_id).execute()
-        # Also delete associated questions
         supabase.from_('assignment_questions').delete().eq('assignment_id', assignment_id).execute()
         flash('Assignment deleted!', 'success')
-        return '', 204  # Return no content on successful deletion
-    
+        return '', 204  # No content
+
     flash('Failed to delete assignment.', 'danger')
     return '', 400
-
 
 if __name__ == '__main__':
     app.run(debug=True)
