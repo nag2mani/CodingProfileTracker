@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coding Profile Tracker</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student/dashboard.css') }}">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar -->
@@ -32,7 +34,7 @@
                 </div>
                 <div class="user-avatar">
                     <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="User Avatar">
-                </div>                
+                </div>
             </header>
 
             <!-- Stats Cards -->
@@ -49,9 +51,11 @@
                     <h3>Problems Solved</h3>
                     <p class="value">{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
                     <div class="breakdown">
-                        <b><span>Easy: {{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }}</span>, 
-                        <span>Medium: {{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium'] }}</span>, 
-                        <span>Hard: {{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard'] }}</span></b>
+                        <b><span>Easy: {{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }}</span>,
+                            <span>Medium: {{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium']
+                                }}</span>,
+                            <span>Hard: {{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard']
+                                }}</span></b>
                     </div>
                 </div>
 
@@ -142,4 +146,5 @@
         </div>
     </div>
 </body>
+
 </html>

@@ -46,10 +46,10 @@
                         {% for question in assignment.assignment_questions %}
                         {{ question.question_number }},
                         {% endfor %}
-                    {% else %}
+                        {% else %}
                     <p>No questions assigned.</p>
                     {% endif %}
-                </p>
+                    </p>
                     <div class="card-footer">
                         <span>📅 Due {{ assignment.due_date }}</span>
                         {% if assignment.status != 'completed' %}
