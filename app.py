@@ -248,12 +248,13 @@ def complete_assignment(assignment_id):
         'submitted_at': datetime.now().isoformat()
     }).execute()
 
-    if getattr(response, 'error', None):  # Use getattr to avoid AttributeError
+    if getattr(response, 'error', None):
         return jsonify({'error': 'Failed to mark assignment as completed'}), 500
 
     return jsonify({'success': 'Assignment marked as completed'}), 200
 
 # ------------------- Teacher Dashboard -------------------
+
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
     if 'user_id' in session and session.get('role') == 'teacher':
