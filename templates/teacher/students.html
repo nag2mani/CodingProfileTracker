@@ -6,19 +6,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/teacher/students.css') }}">
+    <script>
+        function searchStudents() {
+            let input = document.getElementById("search").value.toLowerCase();
+            let rows = document.querySelectorAll("tbody tr");
+            rows.forEach((row) => {
+                let name = row.cells[2].innerText.toLowerCase();
+                let email = row.cells[3].innerText.toLowerCase();
+                row.style.display = name.includes(input) || email.includes(input) ? "" : "none";
+            });
+        }
+    </script>
+    <style>
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">TeachBoard</div>
+            <div class="logo">Rank Board</div>
             <nav>
                 <ul>
-                    <li><span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a></li>
-                    <li><span class="icon">📋</span> <a href="/teacher/assignments">Assignments</a></li>
-                    <li class="active"><span class="icon">👥</span> Students</li>
-                    <li class="logout"><span class="icon">🚪</span> <a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li>🏠 Dashboard</li>
+                    <li><a href="/teacher/assignments">📋 Assignments</a></li>
+                    <li class="active"><a href="/teacher/students">👥 Students</a></li>
+                    <li><a href="/teacher/smarttable">🧮 Smart Table</a></li>
+                    <li class="logout"><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
                 </ul>
             </nav>
         </div>
@@ -27,8 +48,11 @@
         <div class="main-content">
             <header>
                 <h1>All Students</h1>
-                <button class="add-student-btn">Option</button>
+                <!-- <button class="add-student-btn">Option</button> -->
             </header>
+
+            <!-- Search Bar -->
+            <input type="text" id="search" class="search-bar" placeholder="Search students..." onkeyup="searchStudents()">
 
             <!-- Students Table -->
             <div class="students-table">
@@ -41,7 +65,6 @@
                             <th>Email</th>
                             <th>LeetCode Profile</th>
                             <th>GitHub Profile</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,7 +80,6 @@
                             </td>
                             <td>{{ student.name }}</td>
                             <td>{{ student.email }}</td>
-
                             <td>
                                 {% if student.leetcode %}
                                 <a href="{{ student.leetcode }}" target="_blank">
@@ -86,7 +108,6 @@
                 </div>
                 {% endif %}
             </div>
-
         </div>
     </div>
 </body>

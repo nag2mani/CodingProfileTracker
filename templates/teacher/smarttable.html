@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Table</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/teacher/smarttable.css') }}"
+    />
+    <script>
+      function sortTable(n) {
+        let table = document.getElementById("studentTable");
+        let rows = Array.from(table.rows).slice(1);
+        let asc = table.dataset.sortOrder === "asc" ? false : true;
+    
+        rows.sort((rowA, rowB) => {
+          let cellA = rowA.cells[n].innerText.trim().replace('%', '');
+          let cellB = rowB.cells[n].innerText.trim().replace('%', '');
+          let a = isNaN(cellA) ? cellA.toLowerCase() : parseFloat(cellA);
+          let b = isNaN(cellB) ? cellB.toLowerCase() : parseFloat(cellB);
+    
+          // Sorting logic
+          if (n === 2) return asc ? a - b : b - a;  // Rank (lower is better)
+          else return asc ? b - a : a - b;  // Higher values on top for other columns
+        });
+    
+        rows.forEach((row) => table.appendChild(row));
+        table.dataset.sortOrder = asc ? "asc" : "desc";
+      }
+    </script>
+    
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="logo">Smart Table</div>
+        <nav>
+          <ul>
+            <li class="active">🏠 Dashboard</li>
+            <li><a href="/teacher/assignments">📋 Assignments</a></li>
+            <li><a href="/teacher/students">👥 Students</a></li>
+            <li class="active" ><a href="/teacher/smarttable">🧮 Smart Table</a></li>
+            <li class="logout"><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="main-content">
+        <h2>Student's LeetCode Data</h2>
+        <div class="top-controls">
+          <div class="sort-options">
+            <select onchange="sortTable(this.value)">
+              <option value="2">Sort by Ranking</option>
+              <option value="3">Sort by Total Solved</option>
+              <option value="4">Sort by Acceptance Rate</option>
+            </select>
+          </div>
+        </div>
+        <table id="studentTable" data-sort-order="asc">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)">Name</th>
+              <th onclick="sortTable(1)">Email</th>
+              <th onclick="sortTable(2)">Ranking</th>
+              <th onclick="sortTable(3)">Total Solved</th>
+              <th onclick="sortTable(4)">Acceptance Rate</th>
+              <th onclick="sortTable(5)">Easy Solved</th>
+              <th onclick="sortTable(6)">Medium Solved</th>
+              <th onclick="sortTable(7)">Hard Solved</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+            <tr>
+              <td>{{ student.name }}</td>
+              <td>{{ student.email }}</td>
+              <td>{{ student.ranking or 'N/A' }}</td>
+              <td>{{ student.totalSolved or 0 }}</td>
+              <td>{{ student.acceptanceRate or 0 }}%</td>
+              <td>{{ student.easySolved or 0 }}</td>
+              <td>{{ student.mediumSolved or 0 }}</td>
+              <td>{{ student.hardSolved or 0 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

@@ -54,6 +54,11 @@ def register():
         leetcode = request.form.get('leetcode')
         github = request.form.get('github')
 
+        # Validate email domain
+        if not email.endswith('@sitare.org'):
+            flash('Please use an email ends with @sitare.org', 'danger')
+            return redirect(url_for('register'))
+
         # Check if user already exists
         response = supabase.from_('users').select('*').eq('email', email).execute()
         if response.data:
@@ -372,6 +377,45 @@ def delete_assignment(assignment_id):
 
     flash('Failed to delete assignment.', 'danger')
     return '', 400
+
+
+@app.route('/teacher/smarttable')
+def teacher_smarttable():
+    if 'user_id' in session and session.get('role') == 'teacher':
+        # Fetch all students
+        students = supabase.from_('users').select('id, name, email, leetcode').eq('role', 'student').execute().data
+
+        # Fetch LeetCode details for each student
+        student_data = []
+        for student in students:
+            leetcode_data = {}
+            try:
+                url = student.get('leetcode')
+                if url:
+                    username = url.rstrip('/').split("/")[-1]
+                    leetcode_data = get_leetcode_data(username) or {}
+            except Exception as e:
+                print(f"Error fetching LeetCode data for {student['name']}: {e}")
+
+            student_data.append({
+                'id': student['id'],
+                'name': student['name'],
+                'email': student['email'],
+                'ranking': leetcode_data.get('ranking', 'N/A'),
+                'totalSolved': leetcode_data.get('totalSolved', 0),
+                'acceptanceRate': leetcode_data.get('acceptanceRate', 0),
+                'easySolved': leetcode_data.get('easySolved', 0),
+                'mediumSolved': leetcode_data.get('mediumSolved', 0),
+                'hardSolved': leetcode_data.get('hardSolved', 0),
+                'totalQuestions': leetcode_data.get('totalQuestions', 0),
+            })
+
+
+        return render_template('teacher/smarttable.html', students=student_data)
+
+    flash('Access denied.', 'danger')
+    return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
