@@ -1,3 +1,4 @@
+/* Reset and base styles */
 * {
     margin: 0;
     padding: 0;
@@ -14,7 +15,6 @@ body {
     min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
     width: 200px;
     background-color: #fff;
@@ -68,10 +68,10 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* Main Content */
 .main-content {
     flex: 1;
     padding: 30px;
+    overflow-y: auto;
 }
 
 header {
@@ -98,27 +98,176 @@ header {
     border-radius: 50%;
 }
 
-/* Content Section */
 .content-section {
     display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
-.info-card {
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sort-filter label {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.sort-filter select {
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.search input {
+    padding: 8px;
+    width: 200px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.charts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.chart-container {
     background-color: #fff;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     flex: 1;
+    min-width: 300px;
+    max-width: 32%;
 }
 
-.info-card h3 {
+.chart-container h3 {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.chart-container .description {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.chart-container canvas {
+    margin-bottom: 15px;
+}
+
+.summary-stats {
+    margin-top: 20px;
+}
+
+.highlights {
+    margin-top: 40px;
+}
+
+.highlights table {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-collapse: collapse;
+}
+
+.highlights th, .highlights td {
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.highlights th {
+    background-color: #e6f0fa;
+    color: #1a73e8;
+    font-weight: bold;
+}
+
+.highlights tr:hover {
+    background-color: #f9f9f9;
+}
+
+.highlights tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.detailed-graphs {
+    margin-top: 40px;
+}
+
+.table-section {
+    margin-top: 40px;
+}
+
+.table-section h3 {
     font-size: 16px;
     color: #777;
     margin-bottom: 10px;
 }
 
-.info-card p {
+.table-section table {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-collapse: collapse;
+}
+
+.table-section th, .table-section td {
+    padding: 15px;
+    text-align: center;
     font-size: 14px;
     color: #333;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table-section th {
+    background-color: #e6f0fa;
+    color: #1a73e8;
+    font-weight: bold;
+}
+
+.table-section tr:hover {
+    background-color: #f9f9f9;
+}
+
+.table-section tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 0 5px;
+    background-color: #1a73e8;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination a:hover {
+    background-color: #1557b0;
+}
+
+.pagination span {
+    font-size: 14px;
+    color: #777;
 }
