@@ -1,77 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSA Progress Hub</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/LandingPage.css') }}">
-</head>
-<body>
-    <!-- Navigation -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Coding Profile Tracker</title>
+    <link rel="stylesheet" href="static/css/index.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://accounts.google.com/gsi/client" async></script>
+  </head>
+  <body>
     <nav class="navbar">
-        <div class="logo">DSA Progress Hub</div>
-        <ul class="nav-links">
-            <li><a href="#">Features</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Pricing</a></li>
-        </ul>
-        <div class="nav-buttons">
-            <a href="/login" class="btn btn-secondary">Login</a>
-            <a href="/register" class="btn btn-primary">Get Started</a>
-        </div>
+      <div class="logo">Coding Profile Tracker</div>
+      <ul class="nav-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#">Github</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <a href="#" class="btn btn-secondary">Option-1</a>
+        <a href="#" class="btn btn-primary">Option-2</a>
+      </div>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="hero">
-        <div class="hero-content">
-            <div class="hero-text">
-            <h1>Empower DSA Learning with Real-Time Insights</h1>
-            <p>Track progress, assign tasks, and analyze performance with our comprehensive monitoring platform designed for both teachers and students.</p>
-            <div class="cta-buttons">
-                <a href="#" class="btn btn-primary">Sign Up as Teacher</a>
-                <a href="#" class="btn btn-primary">Sign Up as Student</a>
-            </div>
-            </div>
-            <div class="video-placeholder">
-                <span class="play-icon">▶</span>
-            </div>
-        </div>
-    </header>
+    <!-- Hero/Login Section -->
+    <section class="hero">
+      <h1>Empower Creative Problem Solving with Real-Time Insights</h1>
+      <p>
+        Sign in with your <b>Sitare email</b> to track progress, assign tasks, and
+        analyze performance.
+      </p>
 
-    <!-- Features Section -->
-    <section class="features">
-        <h2>Key Features</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Progress Tracking</h3>
-                <p>Real-time monitoring of student performance and practice habits.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📝</div>
-                <h3>Task Management</h3>
-                <p>Easily assign and track DSA practice problems.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📈</div>
-                <h3>Analytics Dashboard</h3>
-                <p>Comprehensive insights and performance metrics.</p>
-            </div>
-        </div>
+      <div
+      id="g_id_onload"
+      data-client_id="{{ google_client_id }}"
+      data-context="signin"
+      data-ux_mode="popup"
+      data-callback="handleSignInWithGoogle"
+      data-auto_prompt="true"
+      data-use_fedcm_for_prompt="true"
+      ></div>
+
+      <div
+        class="g_id_signin"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="filled_blue"
+        data-text="signin_with"
+        data-size="large"
+        data-logo_alignment="left"
+      ></div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-            <div class="logo">DSA Progress Hub</div>
-            <div class="footer-links">
-                <a href="#">Contact Us</a>
-                <a href="#">Privacy Policy</a>
-            </div>
-            </div>
-            <p>&copy; 2025 DSA Progress Hub. All rights reserved.</p>
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <h2>Key Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Progress Tracking</h3>
+          <p>
+            Real-time monitoring of student performance and practice habits.
+          </p>
         </div>
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>Task Management</h3>
+          <p>Easily assign and track DSA practice problems.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>Analytics Dashboard</h3>
+          <p>Comprehensive insights and performance metrics.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="sendto:su-22010@sitare.org">Contact Us</a>
+      </div>
+      <p>&copy; 2025 CodingProfileTracker. All rights reserved.</p>
     </footer>
-</body>
+
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    
+      const csrfToken = getCookie("csrf_token");
+    
+      async function handleSignInWithGoogle(response) {
+        const credential = response.credential;
+        const res = await fetch("/auth/callback", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+          body: JSON.stringify({ credential }),
+        });
+    
+        const result = await res.json();
+        if (result.success) {
+          window.location.href = "/route_dashboard";
+        } else {
+          alert("Login failed: " + result.message);
+        }
+      }
+    </script>
+    
+  </body>
 </html>
