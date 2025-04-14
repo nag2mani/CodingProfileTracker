@@ -35,12 +35,12 @@
             <div class="logo">Rank Board</div>
             <nav>
                 <ul>
-                    <li>🏠 Dashboard</li>
-                    <li><a href="/teacher/assignments">📋 Assignments</a></li>
-                    <li class="active"><a href="/teacher/students">👥 Students</a></li>
-                    <li><a href="/teacher/smarttable">🧮 Smart Table</a></li>
-                    <li class="logout"><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
-                </ul>
+                    <li> <span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a> </li>
+                    <li> <span class="icon">📋</span> <a href="/teacher/assignments">Assignments</a> </li>
+                    <li  class="active" > <span class="icon">👥</span> <a href="/teacher/students">Students</a> </li>
+                    <li><span class="icon">🧮</span><a href="/teacher/smarttable">Smart Table</a></li>
+                    <li class="logout"><span class="icon">🚪</span><a href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
             </nav>
         </div>
 

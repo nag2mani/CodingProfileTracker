@@ -15,11 +15,12 @@
             <div class="logo">CodingProfile</div>
             <nav>
                 <ul>
-                    <li><span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a></li>
-                    <li class="active"><span class="icon">📋</span> Assignments</li>
-                    <li><span class="icon">👥</span> <a href="/teacher/students">Students</a></li>
-                    <li class="logout"><span class="icon">🚪</span> <a href="{{ url_for('logout') }}">Logout</a></li>
-                </ul>
+                    <li> <span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a> </li>
+                    <li class="active" > <span class="icon">📋</span> <a href="/teacher/assignments">Assignments</a> </li>
+                    <li><span class="icon">👥</span><a href="/teacher/students">Students</a></li>
+                    <li><span class="icon">🧮</span><a href="/teacher/smarttable">Smart Table</a></li>
+                    <li class="logout"><span class="icon">🚪</span><a href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
             </nav>
         </div>
 

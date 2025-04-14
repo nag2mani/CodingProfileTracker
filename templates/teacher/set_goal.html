@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Set Goal</title>
+    <style>
+        .goal-card { padding: 1rem; margin: 1rem 0; border-radius: 10px; }
+        .level-1 { background-color: #ffeeba; } /* yellow */
+        .level-2 { background-color: #bee5eb; } /* blue */
+        .level-3 { background-color: #c3e6cb; } /* green */
+    </style>
+</head>
+<body>
+    <h2>Assign a Goal</h2>
+    <form method="POST">
+        <input name="title" placeholder="Goal Title" required><br>
+        <select name="level">
+            <option value="level-1">Level 1</option>
+            <option value="level-2">Level 2</option>
+            <option value="level-3">Level 3</option>
+        </select><br>
+        <textarea name="description" placeholder="Description" required></textarea><br>
+        <button type="submit">Assign Goal</button>
+    </form>
+
+    <h3>Existing Goals</h3>
+    {% for goal in goals %}
+        <div class="goal-card {{ goal.level }}">
+            <strong>{{ goal.title }}</strong> ({{ goal.level }})
+            <p>{{ goal.description }}</p>
+            <form method="POST" action="/teacher/add_task/{{ goal.id }}">
+                <input name="task_description" placeholder="Add task" required>
+                <button type="submit">Add Task</button>
+            </form>
+        </div>
+    {% endfor %}
+</body>
+</html>

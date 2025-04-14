@@ -14,25 +14,14 @@
       <div class="sidebar">
         <div class="logo">CodingProfile</div>
         <nav>
-          <ul>
-            <li class="active"><span class="icon">🏠</span> Dashboard</li>
-            <li>
-              <span class="icon">📋</span>
-              <a href="/teacher/assignments">Assignments</a>
-            </li>
-            <li>
-              <span class="icon">👥</span>
-              <a href="/teacher/students">Students</a>
-            </li>
-            <li>
-              <span class="icon">🧮</span>
-              <a href="/teacher/smarttable">Smart Table</a>
-            </li>
-            <li class="logout">
-              <span class="icon">🚪</span>
-              <a href="{{ url_for('logout') }}">Logout</a>
-            </li>
-          </ul>
+            <ul>
+                <li class="active" > <span class="icon">🏠</span> <a href="/teacher/dashboard">Dashboard</a> </li>
+                <li> <span class="icon">📋</span> <a href="/teacher/assignments">Assignments</a> </li>
+                <li> <span class="icon">🎯</span> <a href="/teacher/set_goal">Set Goal</a> </li>
+                <li><span class="icon">👥</span><a href="/teacher/students">Students</a></li>
+                <li><span class="icon">🧮</span><a href="/teacher/smarttable">Smart Table</a></li>
+                <li class="logout"><span class="icon">🚪</span><a href="{{ url_for('logout') }}">Logout</a></li>
+              </ul>
         </nav>
       </div>
 
@@ -40,13 +29,13 @@
       <div class="main-content">
         <header>
           <div class="welcome">
-            <h1>Welcome, {{ username }}!</h1>
+            <h1>Welcome, {{ user.name }}!</h1>
             <p>Manage assignments and students efficiently.</p>
           </div>
           <div class="user-avatar">
             <img
-              src="{{ url_for('static', filename='images/profile.svg') }}"
-              alt="User Avatar"
+              src="#"
+              alt="Avatar"
             />
           </div>
         </header>
@@ -156,87 +145,15 @@
                         </div>
                     </div>
                 </div>
-
-                
-                <!-- <div class="table-section">
-                    <h3>Detailed Metrics ({{ total_students }} Students)</h3>
-                    <div class="controls">
-                        <div class="sort-filter">
-                            <label for="sort_by">Sort By:</label>
-                            <select id="sort_by" onchange="updateSort(this.value)">
-                                <option value="totalSolved" {% if sort_by == 'totalSolved' %}selected{% endif %}>Total Problems Solved</option>
-                                <option value="easy_pct" {% if sort_by == 'easy_pct' %}selected{% endif %}>Easy (%)</option>
-                                <option value="medium_pct" {% if sort_by == 'medium_pct' %}selected{% endif %}>Medium (%)</option>
-                                <option value="hard_pct" {% if sort_by == 'hard_pct' %}selected{% endif %}>Hard (%)</option>
-                                <option value="acceptanceRate" {% if sort_by == 'acceptanceRate' %}selected{% endif %}>Acceptance Rate</option>
-                                <option value="completionRate" {% if sort_by == 'completionRate' %}selected{% endif %}>Completion Rate</option>
-                                <option value="weightedScore" {% if sort_by == 'weightedScore' %}selected{% endif %}>Weighted Score</option>
-                                <option value="ranking_pct" {% if sort_by == 'ranking_pct' %}selected{% endif %}>Ranking Percentile</option>
-                                <option value="contribPerProblem" {% if sort_by == 'contribPerProblem' %}selected{% endif %}>Contribution per Problem</option>
-                                <option value="consistency" {% if sort_by == 'consistency' %}selected{% endif %}>Consistency</option>
-                                <option value="peakActivity" {% if sort_by == 'peakActivity' %}selected{% endif %}>Peak Activity</option>
-                            </select>
-                        </div>
-                        <div class="search">
-                            <input type="text" id="search" placeholder="Search by name..." value="{{ search_query }}" oninput="updateSearch(this.value)">
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th title="Student Name">Student</th>
-                                <th title="Total number of LeetCode problems solved">Total Solved</th>
-                                <th title="Percentage of Easy problems solved">Easy (%)</th>
-                                <th title="Percentage of Medium problems solved">Medium (%)</th>
-                                <th title="Percentage of Hard problems solved">Hard (%)</th>
-                                <th title="Percentage of submissions accepted">Acceptance (%)</th>
-                                <th title="Percentage of total problems solved out of all available">Completion (%)</th>
-                                <th title="Score: (Easy × 1) + (Medium × 3) + (Hard × 5)">Weighted Score</th>
-                                <th title="Global ranking percentile (higher is better)">Ranking (%)</th>
-                                <th title="Average contribution points per problem solved">Contrib/Problem</th>
-                                <th title="Percentage of active days out of total days">Consistency (%)</th>
-                                <th title="Highest submissions in a single day">Peak Activity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for student in table_metrics %}
-                            <tr>
-                                <td>{{ student.name }}</td>
-                                <td>{{ student.totalSolved }}</td>
-                                <td>{{ student.easy_pct }}</td>
-                                <td>{{ student.medium_pct }}</td>
-                                <td>{{ student.hard_pct }}</td>
-                                <td>{{ student.acceptanceRate }}</td>
-                                <td>{{ student.completionRate }}</td>
-                                <td>{{ student.weightedScore }}</td>
-                                <td>{{ student.ranking_pct }}</td>
-                                <td>{{ student.contribPerProblem }}</td>
-                                <td>{{ student.consistency }}</td>
-                                <td>{{ student.peakActivity }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    
-                    <div class="pagination">
-                        {% if current_page > 1 %}
-                        <a href="{{ url_for('teacher_dashboard', page=current_page-1, sort_by=sort_by, search=search_query) }}">Previous</a>
-                        {% endif %}
-                        <span>Page {{ current_page }} of {{ total_pages }}</span>
-                        {% if current_page < total_pages %}
-                        <a href="{{ url_for('teacher_dashboard', page=current_page+1, sort_by=sort_by, search=search_query) }}">Next</a>
-                        {% endif %}
-                    </div>
-                </div> -->
             </div>
         </div>
     </div>
 
     <!-- JavaScript for Charts and Controls -->
     <script>
-        const summaryStats = {{ summary_stats | tojson }};
-        const allMetrics = {{ table_metrics | tojson }};
-        const leetcodeMetrics = {{ leetcode_metrics | tojson }};
+        const summaryStats = summary_stats | tojson;
+        const allMetrics = table_metrics | tojson;
+        const leetcodeMetrics = leetcode_metrics | tojson;
 
         // Helper function for Box Plot (simplified as a bar with whiskers)
         function createBoxPlot(ctx, metric) {

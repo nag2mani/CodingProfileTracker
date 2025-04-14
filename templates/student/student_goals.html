@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Goals</title>
+    <style>
+        .goal-card { padding: 1rem; margin: 1rem 0; border-radius: 10px; }
+        .completed { background-color: #28a745; color: white; }
+        .in-progress { background-color: #ffc107; }
+        .not-started { background-color: #e0e0e0; }
+    </style>
+</head>
+<body>
+    <h2>My Learning Goals</h2>
+    {% for goal in goals %}
+        {% set completed_tasks = goal.goal_tasks | selectattr('is_completed') | list %}
+        {% set total_tasks = goal.goal_tasks | length %}
+        {% if completed_tasks | length == total_tasks and total_tasks > 0 %}
+            {% set status = 'completed' %}
+        {% elif completed_tasks | length > 0 %}
+            {% set status = 'in-progress' %}
+        {% else %}
+            {% set status = 'not-started' %}
+        {% endif %}
+
+        <div class="goal-card {{ status }}">
+            <strong>{{ goal.title }}</strong> - <em>{{ goal.level }}</em><br>
+            {{ goal.description }}<br>
+            Tasks:
+            <ul>
+                {% for task in goal.goal_tasks %}
+                    <li>{{ task.task_description }} - {% if task.is_completed %}✅{% else %}❌{% endif %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</body>
+</html>
