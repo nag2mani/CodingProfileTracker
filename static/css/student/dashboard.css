@@ -68,6 +68,20 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
+.user-avatar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.user-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
 /* Main Content */
 .main-content {
     flex: 1;

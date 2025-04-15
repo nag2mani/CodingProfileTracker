@@ -56,21 +56,24 @@ def auth_callback():
         # print(user)
         email = user.email
         name = user.user_metadata.get("full_name")
+        picture = user.user_metadata.get("picture") 
 
         if not email.endswith("@sitare.org"):
             return jsonify({"success": False, "message": "Only sitare.org emails allowed."}), 403
 
         session["user"] = user.user_metadata
         session["user_id"] = user.id
+        session["avatar_url"] = picture
 
         username = email.split("@")[0]
-        session["dashboard"] = "teacher" if username.startswith("su-2") else "student"
+        session["dashboard"] = "student" if username.startswith("su-2") else "teacher"
 
         # We can add role based on email;
         supabase.table("profiles").upsert({
             "id": user.id,
             "email": email,
             "name" :name,
+            "avatar_url": picture,
             "role":session["dashboard"]
         }).execute()
 
@@ -629,38 +632,126 @@ def delete_assignment(assignment_id):
     flash('Failed to delete assignment.', 'danger')
     return '', 400
 
-@app.route('/teacher/set_goal/<student_id>', methods=['GET', 'POST'])
-def set_goal(student_id):
+@app.route('/teacher/set_goal', methods=['GET', 'POST'])
+def set_goal():
+    if 'user' not in session or session['user']['email'].split('@')[-1] != 'sitare.org':
+        return redirect('/')
+
     if request.method == 'POST':
         title = request.form['title']
-        level = request.form['level']
         description = request.form['description']
-        goal_data = {
-            "user_id": student_id,
-            "title": title,
-            "level": level,
-            "description": description
-        }
-        supabase.table("goals").insert(goal_data).execute()
-        return redirect(f"/teacher/set_goal/{student_id}")
+        level_1 = request.form['level_1']
+        level_2 = request.form['level_2']
+        level_3 = request.form['level_3']
 
-    goals = supabase.table("goals").select("*").eq("user_id", student_id).execute().data
-    return render_template("teacher/set_goal.html", goals=goals, student_id=student_id)
+        # Insert into goals table
+        goal = supabase.table('goals').insert({
+            'title': title,
+            'description': description,
+            'level_1': level_1,
+            'level_2': level_2,
+            'level_3': level_3
+        }).execute().data[0]
 
-@app.route('/teacher/add_task/<goal_id>', methods=['POST'])
-def add_task(goal_id):
-    task_description = request.form['task_description']
-    supabase.table("goal_tasks").insert({
-        "goal_id": goal_id,
-        "task_description": task_description
-    }).execute()
-    return redirect(request.referrer)
+        # Assign to all students
+        students = supabase.table('profiles').select('id').eq('role', 'student').execute().data
+        for student in students:
+            supabase.table('student_goal_progress').insert({
+                'student_id': student['id'],
+                'goal_id': goal['id'],
+                'level_1_completed': False,
+                'level_2_completed': False,
+                'level_3_completed': False
+            }).execute()
 
-@app.route('/student/goals')
+        return redirect('/teacher/set_goal')
+
+    # Fetch existing goals
+    goals = supabase.table('goals').select('*').execute().data
+
+    return render_template('teacher/set_goal.html', goals=goals)
+
+@app.route('/teacher/delete_goal/<goal_id>', methods=['POST'])
+def delete_goal(goal_id):
+    if 'user' not in session or session['user']['email'].split('@')[-1] != 'sitare.org':
+        return redirect('/')
+
+    # Delete goal progress for all students first
+    supabase.table('student_goal_progress').delete().eq('goal_id', goal_id).execute()
+
+    # Then delete the goal
+    supabase.table('goals').delete().eq('id', goal_id).execute()
+
+    return redirect('/teacher/set_goal')
+
+
+@app.route('/student/goals', methods=['GET', 'POST'])
 def student_goals():
-    user_id = session.get("user_id")
-    goals = supabase.table("goals").select("*, goal_tasks(*)").eq("user_id", user_id).execute().data
-    return render_template("student/student_goals.html", goals=goals)
+    if 'user' not in session:
+        return redirect(url_for('index'))
+
+    user_email = session['user']['email']
+    profile_response = supabase.table('profiles').select('id').eq('email', user_email).execute()
+    if not profile_response.data:
+        return "User profile not found", 404
+    user_id = profile_response.data[0]['id']
+
+    # 1. Handle goal update form submission
+    if request.method == 'POST':
+        goal_id = request.form['goal_id']
+        level = int(request.form['level'])
+
+        # Insert progress with timestamp
+        supabase.table('student_goal_progress_history').insert({
+            'student_id': user_id,
+            'goal_id': goal_id,
+            'level': level,
+            'completed_at': datetime.isoformat()
+        }).execute()
+
+        # Optional: also update the latest level in `student_goal_progress`
+        supabase.table('student_goal_progress').upsert({
+            'student_id': user_id,
+            'goal_id': goal_id,
+            'completed_level': level
+        }).execute()
+
+    # 2. Fetch goals
+    goals = supabase.table('goals').select('*').execute().data
+
+    # 3. Fetch current progress
+    progress_rows = supabase.table('student_goal_progress').select('*').eq('student_id', user_id).execute().data
+    progress = {row['goal_id']: row for row in progress_rows}
+
+    # ✅ 4. Fetch progress history (fix here)
+    progress_history_result = supabase.rpc('get_student_progress_with_goal_title', {
+        'student_id': user_id
+    }).execute()
+
+    progress_history = progress_history_result.data if progress_history_result.data else []
+
+    return render_template('student/student_goals.html', goals=goals, progress=progress, progress_history=progress_history)
+
+
+
+@app.route('/student/mark_level_complete', methods=['POST'])
+def mark_level_complete():
+    if 'user' not in session or session['user']['role'] != 'student':
+        return redirect('/')
+    
+    user_id = session['user']['id']
+    goal_id = request.form['goal_id']
+    completed_level = int(request.form['completed_level'])
+
+    # Insert the history record
+    supabase.table('student_goal_progress_history').insert({
+        'student_id': user_id,
+        'goal_id': goal_id,
+        'level': completed_level
+    }).execute()
+
+    return redirect('/student/goals')
+
 
 @app.route('/teacher/smarttable')
 def teacher_smarttable():

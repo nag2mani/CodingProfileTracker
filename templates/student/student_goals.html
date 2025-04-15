@@ -1,37 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Goals</title>
+    <title>Student Goals</title>
     <style>
-        .goal-card { padding: 1rem; margin: 1rem 0; border-radius: 10px; }
-        .completed { background-color: #28a745; color: white; }
-        .in-progress { background-color: #ffc107; }
-        .not-started { background-color: #e0e0e0; }
+        .goal-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .level {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-right: 10px;
+            color: white;
+        }
+        .level-1 { background-color: #f39c12; } /* yellow */
+        .level-2 { background-color: #3498db; } /* blue */
+        .level-3 { background-color: #2ecc71; } /* green */
     </style>
 </head>
 <body>
-    <h2>My Learning Goals</h2>
-    {% for goal in goals %}
-        {% set completed_tasks = goal.goal_tasks | selectattr('is_completed') | list %}
-        {% set total_tasks = goal.goal_tasks | length %}
-        {% if completed_tasks | length == total_tasks and total_tasks > 0 %}
-            {% set status = 'completed' %}
-        {% elif completed_tasks | length > 0 %}
-            {% set status = 'in-progress' %}
-        {% else %}
-            {% set status = 'not-started' %}
-        {% endif %}
+    <h2>Your Assigned Goals</h2>
 
-        <div class="goal-card {{ status }}">
-            <strong>{{ goal.title }}</strong> - <em>{{ goal.level }}</em><br>
-            {{ goal.description }}<br>
-            Tasks:
-            <ul>
-                {% for task in goal.goal_tasks %}
-                    <li>{{ task.task_description }} - {% if task.is_completed %}✅{% else %}❌{% endif %}</li>
-                {% endfor %}
-            </ul>
-        </div>
+    {% for goal in goals %}
+    <div class="goal-card">
+        <h3>{{ goal.title }}</h3>
+        <p>{{ goal.description }}</p>
+
+        {% set completed = progress.get(goal.id, {}).get('completed_level', 0) %}
+
+        <p>Completed Level: 
+            {% if completed == 1 %}
+                <span class="level level-1">Level 1</span>
+            {% elif completed == 2 %}
+                <span class="level level-2">Level 2</span>
+            {% elif completed == 3 %}
+                <span class="level level-3">Level 3</span>
+            {% else %}
+                <span>Not completed</span>
+            {% endif %}
+        </p>
+
+        <form method="POST">
+            <input type="hidden" name="goal_id" value="{{ goal.id }}">
+            <label for="level">Mark as Completed Level:</label>
+            <select name="level">
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+            </select>
+            <button type="submit">Update</button>
+        </form>
+    </div>
     {% endfor %}
+
+
+    <h2>Your Completed Levels</h2>
+<table>
+  <tr>
+    <th>Goal Title</th>
+    <th>Level</th>
+    <th>Completed At</th>
+  </tr>
+  {% for record in progress_history %}
+  <tr>
+    <td>{{ record.goal_title }}</td>
+    <td>Level {{ record.level }}</td>
+    <td>{{ record.completed_at }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 </body>
 </html>
