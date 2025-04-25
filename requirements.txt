@@ -5,3 +5,4 @@ requests
 supabase
 python-dotenv
 Flask-WTF
+gunicorn
