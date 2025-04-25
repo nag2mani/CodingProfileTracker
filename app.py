@@ -83,7 +83,6 @@ def auth_callback():
         print("Exception:", str(e))
         return jsonify({"success": False, "message": str(e)}), 500
 
-
 # This is a route decorator in Flask. It tells Flask to call the route_dashboard() function,
 # whenever a client accesses the URL /route_dashboard.
 @app.route("/route_dashboard")

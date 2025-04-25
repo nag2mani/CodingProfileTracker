@@ -5,91 +5,282 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Coding Profile Tracker</title>
-    <link rel="stylesheet" href="static/css/index.css" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Stylesheet -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
+      rel="stylesheet"
+    />
+    <!-- Main CSS File -->
+    <link href="static/assets/css/main.css" rel="stylesheet" />
     <script src="https://accounts.google.com/gsi/client" async></script>
   </head>
-  <body>
-    <nav class="navbar">
-      <div class="logo">Coding Profile Tracker</div>
 
-      <div class="hamburger" id="hamburger">☰</div>
+  <body class="index-page">
+    <header id="header" class="header d-flex align-items-center sticky-top">
+      <div
+        class="container-fluid position-relative d-flex align-items-center justify-content-between"
+      >
+        <a
+          href="index.html"
+          class="logo d-flex align-items-center me-auto me-xl-0"
+        >
+          <!-- Uncomment the line below if you also wish to use an image logo -->
+          <!-- <img src="assets/img/logo.png" alt=""> -->
+          <h3 class="sitename">Coding Profile Tracker</h3>
+        </a>
 
-      <ul class="nav-links" id="nav-links">
-        <li><a href="#">About</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#">Github</a></li>
-      </ul>
-
-      <div class="nav-buttons" id="nav-buttons">
-        <a href="#" class="btn btn-secondary">Option-1</a>
-        <a href="#" class="btn btn-primary">Option-2</a>
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li><a href="#hero" class="active">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#footer">Contact</a></li>
+          </ul>
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
       </div>
-    </nav>
+    </header>
 
-    <!-- Hero/Login Section -->
-    <section class="hero">
-      <h1>Empower Creative Problem Solving with Real-Time Insights</h1>
-      <p>
-        Sign in with your <b>Sitare email</b> to track progress, assign tasks,
-        and analyze performance.
-      </p>
+    <main class="main">
+      <!-- Hero Section -->
+      <section id="hero" class="hero section dark-background">
+        <img src="static/assets/img/hero-bg.jpg" alt="" data-aos="fade-in" />
 
-      <div
-        id="g_id_onload"
-        data-client_id="{{ google_client_id }}"
-        data-context="signin"
-        data-ux_mode="popup"
-        data-callback="handleSignInWithGoogle"
-        data-auto_prompt="true"
-        data-use_fedcm_for_prompt="true"
-      ></div>
+        <div
+          class="container text-center"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <h2>Empower Creative Problem Solving with Real-Time Insights</h2>
+              <p>
+                Sign in with your
+                <span class="text-warning">Sitare Email</span> Id
+              </p>
 
-      <div
-        class="g_id_signin"
-        data-type="standard"
-        data-shape="rectangular"
-        data-theme="filled_blue"
-        data-text="signin_with"
-        data-size="large"
-        data-logo_alignment="left"
-      ></div>
-    </section>
+              <div
+              id="g_id_onload"
+              data-client_id="{{ google_client_id }}"
+              data-context="signin"
+              data-ux_mode="popup"
+              data-callback="handleSignInWithGoogle"
+              data-auto_prompt="true"
+              data-use_fedcm_for_prompt="true"
+            ></div>
+      
+            <div
+            class="g_id_signin custom-google-btn"
+            data-type="standard"
+            data-shape="rectangular"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large"
+            data-logo_alignment="left"
+          ></div>
+          
+          <style>
+            .custom-google-btn {
+              width: 192px;
+              margin: 20px auto;
+            }
+            .g_id_signin iframe {
+              width: 100% !important;
+              max-width: 192px !important;
+            }
+          </style>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-      <h2>Key Features</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Progress Tracking</h3>
+      <!-- Services Section -->
+      <section id="services" class="services section light-background">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Our Key Features</h2>
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container">
+          <div class="row gy-4">
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-activity"></i>
+                </div>
+                <a href="#" class="stretched-link">
+                  <h3>Progress Tracking</h3>
+                </a>
+                <p>Real-time monitoring of student performance.</p>
+              </div>
+            </div>
+
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-broadcast"></i>
+                </div>
+                <a href="#" class="stretched-link">
+                  <h3>Task Management</h3>
+                </a>
+                <p>Easily assign and track DSA practice problems.</p>
+              </div>
+            </div>
+
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-easel"></i>
+                </div>
+                <a href="#" class="stretched-link">
+                  <h3>Analytics Dashboard</h3>
+                </a>
+                <p>Comprehensive insights and performance metrics.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Team Section -->
+      <section class="team-15 team section" id="team">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Team</h2>
+        </div>
+        <!-- End Section Title -->
+        <div class="content">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-4 col-md-6 mb-4">
+                <div class="person">
+                  <figure>
+                    <img
+                      src="static/assets/img/team/team-1.jpg"
+                      alt="Image"
+                      class="img-fluid"
+                    />
+                    <div class="social">
+                      <a href="https://www.linkedin.com/in/kushal-shah-95b9a3b/"><span class="bi bi-linkedin"></span></a>
+                      <a href="https://www.bekushal.com/"><span class="bi bi-globe"></span></a>
+                      <a href="https://www.bekushal.com/"><span class="bi bi-twitter"></span></a>
+                    </div>
+                  </figure>
+                  <div class="person-contents">
+                    <h3>Kushal Shah</h3>
+                    <span class="position">Lead Mentor</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-md-6 mb-4">
+                <div class="person">
+                  <figure>
+                    <img
+                      src="static/assets/img/team/team-2.png"
+                      alt="Image"
+                      class="img-fluid"
+                    />
+                    <div class="social">
+                      <a href="https://www.linkedin.com/in/nag2mani/"><span class="bi bi-linkedin"></span></a>
+                      <a href="https://github.com/nag2mani"><span class="bi bi-globe"></span></a>
+                      <a href="https://x.com/nag2mani"><span class="bi bi-twitter"></span></a>
+                    </div>
+                  </figure>
+                  <div class="person-contents">
+                    <h3>Nagmani Kumar</h3>
+                    <span class="position">Backend & Database</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-md-6 mb-4">
+                <div class="person">
+                  <figure>
+                    <img
+                      src="static/assets/img/team/team-3.jpg"
+                      alt="Image"
+                      class="img-fluid"
+                    />
+                    <div class="social">
+                      <a href="https://www.linkedin.com/in/shadab-raza-8904a6250/"><span class="bi bi-linkedin"></span></a>
+                      <a href="#"><span class="bi bi-globe"></span></a>
+                      <a href="#"><span class="bi bi-twitter"></span></a>
+                    </div>
+                  </figure>
+                  <div class="person-contents">
+                    <h3>Shadab Raza</h3>
+                    <span class="position">Data & AI</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="footer" class="site-footer">
+      <div class="footer-container">
+        <div class="footer-left">
+          <a href="mailto:su-22010@sitare.org" class="footer-link"
+            >Contact Us</a
+          >
+        </div>
+        <div class="footer-center">
           <p>
-            Real-time monitoring of student performance and practice habits.
+            <strong>Phone:</strong> +91 8969XXXXXX,
+            <span><strong>Email:</strong>su-22010@sitare.org</span>
           </p>
+          <p>&copy; 2025 Sitare University. All rights reserved.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">📝</div>
-          <h3>Task Management</h3>
-          <p>Easily assign and track DSA practice problems.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📈</div>
-          <h3>Analytics Dashboard</h3>
-          <p>Comprehensive insights and performance metrics.</p>
-        </div>
+        <div class="footer-right"></div>
       </div>
-    </section>
-
-    <footer>
-      <div class="footer-links">
-        <a href="sendto:su-22010@sitare.org">Contact Us</a>
-      </div>
-      <p>&copy; 2025 CodingProfileTracker. All rights reserved.</p>
     </footer>
 
+    <!-- Preloader -->
+    <div id="preloader"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/noframework.waypoints.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@srexi/purecounterjs@1.5.0/dist/purecounter_vanilla.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/js/glightbox.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10.0.4/swiper-bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="static/assets/js/main.js"></script>
     <script>
       function getCookie(name) {
         let cookieValue = null;

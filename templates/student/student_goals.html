@@ -1,77 +1,111 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Student Goals</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student/dashboard.css') }}">
     <style>
-        .goal-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 15px;
-        }
-        .level {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            margin-right: 10px;
-            color: white;
-        }
-        .level-1 { background-color: #f39c12; } /* yellow */
-        .level-2 { background-color: #3498db; } /* blue */
-        .level-3 { background-color: #2ecc71; } /* green */
+      .goal-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 15px;
+      }
+      .level {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin-right: 10px;
+        color: white;
+      }
+      .level-1 {
+        background-color: #f39c12;
+      } /* yellow */
+      .level-2 {
+        background-color: #3498db;
+      } /* blue */
+      .level-3 {
+        background-color: #2ecc71;
+      } /* green */
     </style>
-</head>
-<body>
-    <h2>Your Assigned Goals</h2>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">CodingProfile</div>
+        <nav>
+          <ul>
+            <li><span class="icon">🏠</span> <a href="/student/dashboard">Dashboard</a></li>
+            <li>
+              <span class="icon">📋</span>
+              <a href="/student/assignments">Assignments</a>
+            </li>
+            <li>
+              <span class="icon">🎯</span> <a href="/student/goals">Goals</a>
+            </li>
+            <li>
+              <span class="icon">💬</span>
+              <a href="/student/edit_profile">Edit Profile</a>
+            </li>
+            <li class="logout">
+              <span class="icon">🚪</span> <a href="/logout">Logout</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-    {% for goal in goals %}
-    <div class="goal-card">
-        <h3>{{ goal.title }}</h3>
-        <p>{{ goal.description }}</p>
+      <div class="main-content">
+        <h2>Your Assigned Goals</h2>
 
-        {% set completed = progress.get(goal.id, {}).get('completed_level', 0) %}
+        {% for goal in goals %}
+        <div class="goal-card">
+          <h3>{{ goal.title }}</h3>
+          <p>{{ goal.description }}</p>
 
-        <p>Completed Level: 
-            {% if completed == 1 %}
-                <span class="level level-1">Level 1</span>
+          {% set completed = progress.get(goal.id, {}).get('completed_level', 0)
+          %}
+
+          <p>
+            Completed Level: {% if completed == 1 %}
+            <span class="level level-1">Level 1</span>
             {% elif completed == 2 %}
-                <span class="level level-2">Level 2</span>
+            <span class="level level-2">Level 2</span>
             {% elif completed == 3 %}
-                <span class="level level-3">Level 3</span>
+            <span class="level level-3">Level 3</span>
             {% else %}
-                <span>Not completed</span>
+            <span>Not completed</span>
             {% endif %}
-        </p>
+          </p>
 
-        <form method="POST">
-            <input type="hidden" name="goal_id" value="{{ goal.id }}">
+          <form method="POST">
+            <input type="hidden" name="goal_id" value="{{ goal.id }}" />
             <label for="level">Mark as Completed Level:</label>
             <select name="level">
-                <option value="1">Level 1</option>
-                <option value="2">Level 2</option>
-                <option value="3">Level 3</option>
+              <option value="1">Level 1</option>
+              <option value="2">Level 2</option>
+              <option value="3">Level 3</option>
             </select>
             <button type="submit">Update</button>
-        </form>
+          </form>
+        </div>
+        {% endfor %}
+
+        <h2>Your Completed Levels</h2>
+        <table>
+          <tr>
+            <th>Goal Title</th>
+            <th>Level</th>
+            <th>Completed At</th>
+          </tr>
+          {% for record in progress_history %}
+          <tr>
+            <td>{{ record.goal_title }}</td>
+            <td>Level {{ record.level }}</td>
+            <td>{{ record.completed_at }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
     </div>
-    {% endfor %}
-
-
-    <h2>Your Completed Levels</h2>
-<table>
-  <tr>
-    <th>Goal Title</th>
-    <th>Level</th>
-    <th>Completed At</th>
-  </tr>
-  {% for record in progress_history %}
-  <tr>
-    <td>{{ record.goal_title }}</td>
-    <td>Level {{ record.level }}</td>
-    <td>{{ record.completed_at }}</td>
-  </tr>
-  {% endfor %}
-</table>
-
-</body>
+  </body>
 </html>
