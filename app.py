@@ -13,8 +13,12 @@ from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 
-app.secret_key = os.getenv("SECRET_KEY")
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+# app.secret_key = os.getenv("SECRET_KEY")
+app.secret_key = os.environ.get('SECRET_KEY') #For Deployment on Render
+
+# app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+
 app.config['SESSION_TYPE'] = 'filesystem'
 
 app.config["WTF_CSRF_CHECK_DEFAULT"] = False
@@ -25,10 +29,16 @@ Session(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+# SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+
+# SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+
+# GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
 
 @app.route("/")
 def home():
