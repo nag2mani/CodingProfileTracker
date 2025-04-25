@@ -49,6 +49,7 @@ def home():
 
 @app.route("/auth/callback", methods=["POST"])
 def auth_callback():
+    # https://console.cloud.google.com/auth/clients?project=codingprofiletracker
     try:
         data = request.get_json()
 
@@ -75,7 +76,7 @@ def auth_callback():
         session["avatar_url"] = picture
 
         username = email.split("@")[0]
-        session["dashboard"] = "teacher" if username.startswith("su-2") else "student"
+        session["dashboard"] = "student" if username.startswith("su-2") else "teacher"
 
         # We can add role based on email;
         supabase.table("profiles").upsert({
