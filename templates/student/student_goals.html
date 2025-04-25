@@ -55,7 +55,10 @@
       </div>
 
       <div class="main-content">
-        <h2>Your Assigned Goals</h2>
+        <h1>Your Assigned Goals</h1>
+        <div class="user-avatar">
+          <img src="{{ user.avatar_url }}" alt="User Avatar">
+      </div>
 
         {% for goal in goals %}
         <div class="goal-card">
