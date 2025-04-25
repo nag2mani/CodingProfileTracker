@@ -6,3 +6,4 @@ supabase
 python-dotenv
 Flask-WTF
 gunicorn
+flask-session
