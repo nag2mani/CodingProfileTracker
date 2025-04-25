@@ -55,7 +55,7 @@
                         <!-- Weighted Score -->
                         <div class="chart-container">
                             <h3>Weighted Score</h3>
-                            <p class="description">Distribution of weighted scores (Easy × 1 + Medium × 3 + Hard × 5).</p>
+                            <p class="description">Distribution of weighted scores (Easy x 1 + Medium x 3 + Hard x 5).</p>
                             <canvas id="weightedScoreBoxPlot"></canvas>
                             <canvas id="weightedScoreHistogram"></canvas>
                         </div>
@@ -107,245 +107,47 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Detailed Graphs for Individual Student -->
-                <div class="detailed-graphs">
-                    <h2>Detailed Analysis for Individual Student</h2>
-                    <div class="controls">
-                        <div class="sort-filter">
-                            <label for="student_select">Select Student:</label>
-                            <select id="student_select" onchange="updateDetailedGraphs(this.value)">
-                                {% for name in all_student_names %}
-                                <option value="{{ name }}">{{ name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="charts">
-                        <!-- Submission Activity Over Time (Line Graph) -->
-                        <div class="chart-container">
-                            <h3>Submission Activity Over Time</h3>
-                            <p class="description">Number of submissions over time, showing activity trends.</p>
-                            <canvas id="submissionActivityChart"></canvas>
-                        </div>
-                        <!-- Difficulty Breakdown (Pie Chart) -->
-                        <div class="chart-container">
-                            <h3>Difficulty Breakdown</h3>
-                            <p class="description">Proportion of solved problems by difficulty (Easy, Medium, Hard).</p>
-                            <canvas id="difficultyBreakdownChart"></canvas>
-                        </div>
-                        <!-- Submission Calendar (Heatmap) -->
-                        <div class="chart-container">
-                            <h3>Submission Calendar Heatmap</h3>
-                            <p class="description">Daily submission activity, with darker colors indicating more submissions.</p>
-                            <canvas id="submissionCalendarChart"></canvas>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
     <!-- JavaScript for Charts and Controls -->
     <script>
-        const summaryStats = summary_stats | tojson;
-        const allMetrics = table_metrics | tojson;
-        const leetcodeMetrics = leetcode_metrics | tojson;
-
-        // Helper function for Box Plot (simplified as a bar with whiskers)
-        function createBoxPlot(ctx, metric) {
-            const stats = summaryStats[metric];
-            return new Chart(ctx, {
+        const histogramData = {{ summary_histograms | tojson | safe }};
+        
+        function renderHistogram(metric, canvasId) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const data = histogramData[metric];
+            if (!data) return;
+    
+            const labels = data.bin_edges.map(edge => Math.round(edge));
+            const values = data.histogram;
+    
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: [''],
-                    datasets: [
-                        {
-                            label: 'Median',
-                            data: [stats.median],
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                            barThickness: 20
-                        },
-                        {
-                            label: 'Q1-Q3',
-                            data: [stats.q3 - stats.q1],
-                            backgroundColor: 'rgba(54, 162, 235, 0.3)',
-                            barThickness: 40,
-                            minBarLength: stats.q1
-                        }
-                    ]
-                },
-                options: {
-                    indexAxis: 'y',
-                    scales: {
-                        x: { 
-                            beginAtZero: true, 
-                            max: stats.max * 1.1, 
-                            title: { display: true, text: metric.replace('_', ' ') } 
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        annotation: {
-                            annotations: {
-                                min: {
-                                    type: 'line',
-                                    xMin: stats.min,
-                                    xMax: stats.min,
-                                    borderColor: 'rgba(255, 99, 132, 1)',
-                                    borderWidth: 2,
-                                    label: { content: 'Min', enabled: true }
-                                },
-                                max: {
-                                    type: 'line',
-                                    xMin: stats.max,
-                                    xMax: stats.max,
-                                    borderColor: 'rgba(255, 99, 132, 1)',
-                                    borderWidth: 2,
-                                    label: { content: 'Max', enabled: true }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Helper function for Histogram
-        function createHistogram(ctx, metric) {
-            const stats = summaryStats[metric];
-            return new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: stats.bin_edges.slice(0, -1).map((edge, i) => `${Math.round(edge)}-${Math.round(stats.bin_edges[i+1])}`),
+                    labels: labels.slice(0, -1), // One less than bin_edges
                     datasets: [{
-                        label: 'Frequency',
-                        data: stats.histogram,
+                        label: metric + ' Distribution',
+                        data: values,
                         backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
                     }]
                 },
                 options: {
                     scales: {
-                        x: { title: { display: true, text: metric.replace('_', ' ') } },
-                        y: { beginAtZero: true, title: { display: true, text: 'Number of Students' } }
+                        x: { title: { display: true, text: 'Score Range' }},
+                        y: { title: { display: true, text: 'Number of Students' }}
                     }
                 }
             });
         }
-
-        // Summary Charts
-        createBoxPlot(document.getElementById('totalSolvedBoxPlot').getContext('2d'), 'totalSolved');
-        createHistogram(document.getElementById('totalSolvedHistogram').getContext('2d'), 'totalSolved');
-        createBoxPlot(document.getElementById('weightedScoreBoxPlot').getContext('2d'), 'weightedScore');
-        createHistogram(document.getElementById('weightedScoreHistogram').getContext('2d'), 'weightedScore');
-        createBoxPlot(document.getElementById('peakActivityBoxPlot').getContext('2d'), 'peakActivity');
-        createHistogram(document.getElementById('peakActivityHistogram').getContext('2d'), 'peakActivity');
-
-        // Detailed Graphs for Individual Student
-        let submissionActivityChart, difficultyBreakdownChart, submissionCalendarChart;
-
-        function updateDetailedGraphs(studentName) {
-            const student = allMetrics.find(s => s.name === studentName) || leetcodeMetrics.find(s => s.name === studentName);
-            if (!student) return;
-
-            // 1. Submission Activity Over Time (Line Graph)
-            const calendar = student.submissionCalendar;
-            const dates = Object.keys(calendar).map(ts => new Date(parseInt(ts) * 1000).toISOString().split('T')[0]);
-            const submissions = Object.values(calendar);
-            if (submissionActivityChart) submissionActivityChart.destroy();
-            submissionActivityChart = new Chart(document.getElementById('submissionActivityChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: [{
-                        label: 'Submissions',
-                        data: submissions,
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        fill: true
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: { title: { display: true, text: 'Date' } },
-                        y: { beginAtZero: true, title: { display: true, text: 'Submissions' } }
-                    }
-                }
-            });
-
-            // 2. Difficulty Breakdown (Pie Chart)
-            if (difficultyBreakdownChart) difficultyBreakdownChart.destroy();
-            difficultyBreakdownChart = new Chart(document.getElementById('difficultyBreakdownChart').getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: ['Easy', 'Medium', 'Hard'],
-                    datasets: [{
-                        data: [student.easy_pct, student.medium_pct, student.hard_pct],
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.6)',
-                            'rgba(255, 159, 64, 0.6)',
-                            'rgba(255, 99, 132, 0.6)'
-                        ]
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: { position: 'top' }
-                    }
-                }
-            });
-
-            // 3. Submission Calendar Heatmap (Simplified Bar Chart as Heatmap)
-            const heatmapData = [];
-            const heatmapLabels = [];
-            const startDate = new Date(Math.min(...Object.keys(calendar).map(ts => parseInt(ts) * 1000)));
-            const endDate = new Date(Math.max(...Object.keys(calendar).map(ts => parseInt(ts) * 1000)));
-            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-                const ts = Math.floor(d.getTime() / 1000).toString();
-                heatmapLabels.push(d.toISOString().split('T')[0]);
-                heatmapData.push(calendar[ts] || 0);
-            }
-            if (submissionCalendarChart) submissionCalendarChart.destroy();
-            submissionCalendarChart = new Chart(document.getElementById('submissionCalendarChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: heatmapLabels,
-                    datasets: [{
-                        label: 'Submissions',
-                        data: heatmapData,
-                        backgroundColor: heatmapData.map(val => `rgba(54, 162, 235, ${Math.min(val / 10, 1)})`),
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: { display: false },
-                        y: { beginAtZero: true, title: { display: true, text: 'Submissions' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        // Initialize detailed graphs with the first student
-        const firstStudent = allMetrics[0]?.name || leetcodeMetrics[0]?.name;
-        if (firstStudent) {
-            document.getElementById('student_select').value = firstStudent;
-            updateDetailedGraphs(firstStudent);
-        }
-
-        // Update sort and search
-        function updateSort(sortBy) {
-            const search = document.getElementById('search').value;
-            window.location.href = `{{ url_for('teacher_dashboard') }}?sort_by=${sortBy}&search=${encodeURIComponent(search)}&page=1`;
-        }
-
-        function updateSearch(search) {
-            const sortBy = document.getElementById('sort_by').value;
-            window.location.href = `{{ url_for('teacher_dashboard') }}?sort_by=${sortBy}&search=${encodeURIComponent(search)}&page=1`;
-        }
+    
+        window.onload = () => {
+            renderHistogram('totalSolved', 'totalSolvedHistogram');
+            renderHistogram('weightedScore', 'weightedScoreHistogram');
+            renderHistogram('peakActivity', 'peakActivityHistogram');
+        };
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

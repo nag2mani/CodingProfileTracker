@@ -593,6 +593,12 @@ def teacher_dashboard():
     # For detailed graphs: List of all student names
     all_student_names = [student['name'] for student in students]
 
+    summary_histograms = {
+    metric: {
+        'histogram': summary_stats[metric].get('histogram', []),
+        'bin_edges': summary_stats[metric].get('bin_edges', [])
+    } for metric in ['totalSolved', 'weightedScore', 'peakActivity']
+    }
     return render_template('teacher/dashboard.html',
                         username=session.get('username'),
                         user=user,
@@ -605,7 +611,9 @@ def teacher_dashboard():
                         total_students=total_students,
                         all_student_names=all_student_names,
                         summary_stats=summary_stats,
-                        highlights=highlights)
+                        highlights=highlights,
+                        summary_histograms=summary_histograms)
+
 
 @app.route('/teacher/students')
 def teacher_students():
@@ -795,7 +803,6 @@ def teacher_smarttable():
                 'id': student['id'],
                 'name': student['name'],
                 'email': student['email'],
-                'ranking': leetcode_data.get('ranking', 'N/A'),
                 'totalSolved': leetcode_data.get('totalSolved', 0),
                 'acceptanceRate': leetcode_data.get('acceptanceRate', 0),
                 'easySolved': leetcode_data.get('easySolved', 0),
@@ -803,9 +810,26 @@ def teacher_smarttable():
                 'hardSolved': leetcode_data.get('hardSolved', 0),
                 'totalQuestions': leetcode_data.get('totalQuestions', 0),
             })
-        return render_template('teacher/smarttable.html', students=student_data)
+        
+        # Calculate averages
+        total_students = len(student_data)
+        if total_students > 0:
+            avg_total_solved = sum(s['totalSolved'] for s in student_data) / total_students
+            avg_acceptance_rate = sum(s['acceptanceRate'] for s in student_data) / total_students
+            avg_easy = sum(s['easySolved'] for s in student_data) / total_students
+            avg_medium = sum(s['mediumSolved'] for s in student_data) / total_students
+            avg_hard = sum(s['hardSolved'] for s in student_data) / total_students
+        else:
+            avg_total_solved = avg_acceptance_rate = avg_easy = avg_medium = avg_hard = 0
 
-    flash('Access denied.', 'danger')
+        return render_template('teacher/smarttable.html',
+                            students=student_data,
+                            avg_total_solved=avg_total_solved,
+                            avg_acceptance_rate=avg_acceptance_rate,
+                            avg_easy=avg_easy,
+                            avg_medium=avg_medium,
+                            total_students =total_students ,
+                            avg_hard=avg_hard)
     return redirect(url_for('home'))
 
 @app.route("/logout")
