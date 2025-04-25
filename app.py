@@ -611,7 +611,6 @@ def teacher_dashboard():
 def teacher_students():
     if "user" not in session:
         return redirect("/")
-    user = session['user']
     if 'user_id' in session and session.get('dashboard') == 'teacher':
         students = supabase.from_('profiles').select('*').eq('role', 'student').execute().data
 
@@ -638,7 +637,9 @@ def teacher_students():
 
 @app.route('/teacher/assignments')
 def assignments_page():
-
+    if "user" not in session:
+        return redirect("/")
+    user = session['user']
     if 'user_id' in session and session.get('dashboard') == 'teacher':
         # Get all students
         total_students = supabase.from_('profiles').select('*').eq('role', 'student').execute().data
@@ -802,8 +803,6 @@ def teacher_smarttable():
                 'hardSolved': leetcode_data.get('hardSolved', 0),
                 'totalQuestions': leetcode_data.get('totalQuestions', 0),
             })
-
-
         return render_template('teacher/smarttable.html', students=student_data)
 
     flash('Access denied.', 'danger')
