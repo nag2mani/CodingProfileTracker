@@ -118,12 +118,15 @@ def student_dashboard():
     if 'user' in session:
         user = session['user']
         user_id = session["user_id"]
+        
+        # Fetch the current student data
         response = supabase.table("profiles").select("*").eq('id', user_id).execute()
         if response.data:
             user = response.data[0]
             leetcode_data1 = {}
 
             try:
+                # Get Leetcode data for current student
                 url = user.get('leetcode')
                 if url:
                     username = url.rstrip('/').split("/")[-1]
@@ -143,7 +146,7 @@ def student_dashboard():
                     }
                 else:
                     leetcode_data1 = {
-                        'ranking': 'No Link Provided',
+                        'ranking': 'Add Leetcode Profile Link in Edit Profile',
                         'totalSolved': 0,
                         'totalQuestions': 0,
                         'easySolved': 0,
@@ -159,10 +162,51 @@ def student_dashboard():
             except Exception as e:
                 print("Error:", e)
 
-            return render_template('student/dashboard.html', user=user, leetcode_data1=leetcode_data1)
+            # Fetch all students' LeetCode data for university rank calculation
+            all_students = supabase.table("profiles").select("*").execute().data
+            student_ranks = []
+
+            for student in all_students:
+                leetcode_url = student.get('leetcode')
+                if leetcode_url:
+                    username = leetcode_url.rstrip('/').split("/")[-1]
+                    leetcode_data = get_leetcode_data(username)
+                    if leetcode_data:
+                        student_ranks.append({
+                            'id': student['id'],
+                            'name': student['name'],
+                            'classOf': student['classOf'],
+                            'ranking': leetcode_data['ranking'],
+                            'totalSolved': leetcode_data['totalSolved']
+                        })
+
+            # Sort students by Leetcode ranking (ascending, best rank first)
+            student_ranks.sort(key=lambda x: x['ranking'])
+
+            # Assign university ranks
+            for idx, student in enumerate(student_ranks):
+                student['university_rank'] = idx + 1
+
+            # Find the logged-in user's rank
+            user_rank = next((student['university_rank'] for student in student_ranks if student['id'] == user_id), 'N/A')
+
+            # Get top 10 students
+            top_10_students = student_ranks[:10]
+
+            # Find University topper (top student)
+            university_topper = student_ranks[0]
+
+            return render_template('student/dashboard.html', 
+                                   user=user, 
+                                   leetcode_data1=leetcode_data1,
+                                   user_rank=user_rank,  # Pass user's rank to template
+                                   university_topper=university_topper,
+                                   top_10_students=top_10_students)
 
     flash('Please log in to access the dashboard.', 'warning')
     return redirect(url_for('home'))
+
+
 
 @app.route('/student/assignments/')
 def student_assignments():

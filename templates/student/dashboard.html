@@ -1,133 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coding Profile Tracker</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Coding Profile Tracker</title>
-  
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student/dashboard.css') }}">
-</head>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<body>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/student/dashboard.css') }}"
+    />
+  </head>
 
-  <!-- Navbar with Hamburger -->
-  <nav class="navbar navbar-light bg-light d-md-none">
-    <div class="container-fluid">
-      <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-        ☰
-      </button>
-      <div class="user-avatar ms-auto">
-        <img src="{{ user.avatar_url }}" alt="User Avatar" class="rounded-circle" width="40" height="40">
-      </div>
-    </div>
-  </nav>
-
-  <div class="container-fluid">
-    <div class="row">
-
-      <!-- Sidebar -->
-      <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-white sidebar offcanvas-md offcanvas-start p-3 border-end">
-        <div class="position-sticky">
-          <div class="logo text-primary fw-bold mb-4">CodingProfile</div>
-          <ul class="nav flex-column">
-            <li class="nav-item mb-2">
-              <a class="nav-link active" aria-current="page" href="#"><span class="icon">🏠</span> Dashboard</a>
-            </li>
-            <li class="nav-item mb-2">
-              <a class="nav-link" href="/student/assignments"><span class="icon">📋</span> Assignments</a>
-            </li>
-            <li class="nav-item mb-2">
-              <a class="nav-link" href="/student/edit_profile"><span class="icon">💬</span> Edit Profile</a>
-            </li>
-            <li class="nav-item mt-auto">
-              <a class="nav-link text-danger" href="/logout"><span class="icon">🚪</span> Logout</a>
-            </li>
-          </ul>
+  <body>
+    <!-- Navbar with Hamburger -->
+    <nav class="navbar navbar-light bg-light d-md-none">
+      <div class="container-fluid">
+        <button
+          class="btn btn-outline-primary"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#sidebarMenu"
+        >
+          ☰
+        </button>
+        <div class="user-avatar ms-auto">
+          <img
+            src="{{ user.avatar_url }}"
+            alt="User Avatar"
+            class="rounded-circle"
+            width="40"
+            height="40"
+          />
         </div>
-      </nav>
+      </div>
+    </nav>
 
-      <!-- Main Content -->
-      <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4 py-4">
-        <header class="d-flex justify-content-between align-items-center mb-4">
-          <div class="welcome">
-            <h1 class="h3">Welcome, {{ user.name }}!</h1>
-            <p class="text-muted">Let's check your coding progress</p>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <nav
+          id="sidebarMenu"
+          class="col-md-2 col-lg-2 d-md-block bg-white sidebar offcanvas-md offcanvas-start p-3 border-end"
+        >
+          <div class="position-sticky">
+            <div class="logo text-primary fw-bold mb-4">CodingProfile</div>
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2">
+                <a class="nav-link active" aria-current="page" href="#"
+                  ><span class="icon">🏠</span> Dashboard</a
+                >
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link" href="/student/assignments"
+                  ><span class="icon">📋</span> Assignments</a
+                >
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link" href="/student/edit_profile"
+                  ><span class="icon">💬</span> Edit Profile</a
+                >
+              </li>
+              <li class="nav-item mt-auto">
+                <a class="nav-link text-danger" href="/logout"
+                  ><span class="icon">🚪</span> Logout</a
+                >
+              </li>
+            </ul>
           </div>
-          <div class="d-none d-md-block user-avatar">
-            <img src="{{ user.avatar_url }}" alt="User Avatar" class="rounded-circle" width="50" height="50">
-          </div>
-        </header>
+        </nav>
 
-        <!-- Stats Cards -->
-        <div class="row g-4">
+        <!-- Main Content -->
+        <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <header
+            class="d-flex justify-content-between align-items-center mb-4"
+          >
+            <div class="welcome">
+              <h1 class="h3">Welcome, {{ user.name }}!</h1>
+              <p class="text-muted">Let's check your coding progress</p>
+            </div>
+            <div class="d-none d-md-block user-avatar">
+              <img
+                src="{{ user.avatar_url }}"
+                alt="User Avatar"
+                class="rounded-circle"
+                width="50"
+                height="50"
+              />
+            </div>
+          </header>
 
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="card text-white bg-primary h-100">
-              <div class="card-body">
-                <h5 class="card-title">Your University Rank</h5>
-                <p class="card-text fs-2">02</p>
+          <!-- Stats Cards -->
+          <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card text-white bg-primary h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Your University Rank</h5>
+                  <p class="card-text fs-2">{{user_rank}}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="card text-white bg-success h-100">
-              <div class="card-body">
-                <h5 class="card-title">Your Leetcode Rank</h5>
-                <p class="card-text fs-2">{{ leetcode_data1['ranking'] }}</p>
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card text-white bg-success h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Your Leetcode Rank</h5>
+                  <p class="card-text fs-2">{{ leetcode_data1['ranking'] }}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="card text-white bg-warning h-100">
-              <div class="card-body">
-                <h5 class="card-title">Total Problems Solved</h5>
-                <p class="card-text fs-4">{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
-                <small><b>Easy:</b> {{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }} <br>
-                  <b>Medium:</b> {{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium']
-                }} <br>
-                  <b>Hard:</b> {{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard']
-                }}</small>
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card text-white bg-warning h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Total Problems Solved</h5>
+                  <p class="card-text fs-4">
+                    {{ leetcode_data1['totalSolved'] }} / {{
+                    leetcode_data1['totalQuestions'] }}
+                  </p>
+                  <small
+                    ><b>Easy:</b> {{ leetcode_data1['easySolved'] }} / {{
+                    leetcode_data1['totalEasy'] }} <br />
+                    <b>Medium:</b> {{ leetcode_data1['mediumSolved'] }} / {{
+                    leetcode_data1['totalMedium'] }} <br />
+                    <b>Hard:</b> {{ leetcode_data1['hardSolved'] }} / {{
+                    leetcode_data1['totalHard'] }}</small
+                  >
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="col-12 col-md-6 col-lg-6">
-            <div class="card text-white bg-danger h-100">
-              <div class="card-body">
-                <h5 class="card-title">Your Acceptance Rate</h5>
-                <p class="card-text fs-2">{{ leetcode_data1['acceptanceRate'] }}%</p>
-                <div class="progress">
-                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ leetcode_data1['acceptanceRate'] }}%;" aria-valuenow="{{ leetcode_data1['acceptanceRate'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="col-12 col-md-6 col-lg-6">
+              <div class="card text-white bg-danger h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Your Acceptance Rate</h5>
+                  <p class="card-text fs-2">
+                    {{ leetcode_data1['acceptanceRate'] }}%
+                  </p>
+                  <div class="progress">
+                    <div
+                      class="progress-bar bg-success"
+                      role="progressbar"
+                      style="width: {{ leetcode_data1['acceptanceRate'] }}%;"
+                      aria-valuenow="{{ leetcode_data1['acceptanceRate'] }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- University Topper -->
+            <div class="col-12 col-md-6 col-lg-6">
+              <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                  <h5 class="card-title">University Topper</h5>
+                  <small>
+                    <b>Class Of</b>: {{ university_topper.classOf }} <br />
+                    <b>Name</b>: {{ university_topper.name }} <br />
+                    <b>University Rank</b>: {{ university_topper.university_rank
+                    }} <br />
+                    <b>Leetcode Rank</b>: {{ university_topper.ranking }} <br />
+                    <b>Total Problems Solved</b>: {{
+                    university_topper.totalSolved }}
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top 10 Students -->
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Top 10 Students</h5>
+                  <ul class="list-group">
+                    {% for student in top_10_students %}
+                    <li class="list-group-item">
+                      <b>{{ student.university_rank }}.</b> {{ student.name }} -
+                      {{ student.totalSolved }}
+                    </li>
+                    {% endfor %}
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="col-12 col-md-6 col-lg-6">
-            <div class="card bg-info text-white h-100">
-              <div class="card-body">
-                <h5 class="card-title">University Topper</h5>
-                <small>
-                  <b>Class Of</b>: 2026 <br>
-                  <b>University Rank</b>: 1 <br>
-                  <b>Leetcode Rank</b>: 5250 <br>
-                  <b>Name</b>: Nagmani Kumar
-                </small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

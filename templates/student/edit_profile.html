@@ -103,6 +103,26 @@
     </div>
   </div>
 
+  <script>
+    // Function to validate LeetCode URL format
+    function validateLeetCodeUrl(event) {
+      const leetcodeInput = document.querySelector('input[name="leetcode"]');
+      const leetcodeUrl = leetcodeInput.value.trim();
+      const leetcodePattern = /^https:\/\/leetcode\.com\/u\/[a-zA-Z0-9_-]/;
+  
+      // Check if the URL matches the expected format
+      if (!leetcodePattern.test(leetcodeUrl)) {
+        event.preventDefault();  // Prevent form submission
+        alert("Please enter a valid LeetCode URL in the format: https://leetcode.com/u/username");
+        return false;
+      }
+      return true;
+    }
+  
+    // Add event listener to the form submission
+    document.querySelector('form').addEventListener('submit', validateLeetCodeUrl);
+  </script>
+  
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

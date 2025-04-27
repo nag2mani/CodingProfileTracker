@@ -28,12 +28,7 @@ Output: {
 Task To Complete:
 
 Student;
-
-1. Sitare rank.
-2. Topper and his name and rank.
-3. Remove Goals page and put it on dashboard (how much question need to cross the level 30, 50, 20).
-4.first send the edit profile and check validate the link.
-
+1. Add Goals with Level on dashboard (how much question need to cross the level 30, 50, 20).
 
 Teacher;
 
