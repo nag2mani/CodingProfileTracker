@@ -1,12 +1,3 @@
-Testing Login Details;
-1. kushal@sitare.org, kushal@sitare.org, Teacher
-2. nag2mani@gmail.com, nag2mani@gmail.com, Student
-3. ashutosh@gmail.com, ashutosh@gmail.com, Student
-4. shadab@gmail.com, shadab@gmail.com, Student
-5. sahil@gmail.com, sahil@gmail.com, Student
-
-Create Seesion : python -c 'import secrets; print(secrets.token_hex(16))'
-
 API-1: https://leetcode-stats-api.herokuapp.com/nag2mani
 Output: {
   "status": "success",
@@ -34,6 +25,23 @@ Output: {
 }
 
 
-API Doc: https://colab.research.google.com/drive/1xlqntR2fUHILAeQfid3jLVOBl_9sHPzk?usp=sharing
+Task To Complete:
 
+Student;
+
+1. Sitare rank.
+2. Topper and his name and rank.
+3. Remove Goals page and put it on dashboard (how much question need to cross the level 30, 50, 20).
+4.first send the edit profile and check validate the link.
+
+
+Teacher;
+
+1. Total Problems Solved (fix the range).
+2. make 3 graphs of e,m,h
+3. remove peak sub.
+4. Performance Highlights info icon.
+5. Download
+6. add leetcode rank in smart table.
+7. put everything on smart table.
 

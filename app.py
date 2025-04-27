@@ -238,79 +238,6 @@ def complete_assignment(assignment_id):
 
     return jsonify({'success': 'Assignment marked as completed'}), 200
 
-
-@app.route('/student/goals', methods=['GET', 'POST'])
-def student_goals():
-    if 'user' not in session:
-        return redirect(url_for('index'))
-    
-    if 'user_id' in session:
-        user_id = session['user_id']
-        response = supabase.from_('profiles').select('*').eq('id', user_id).execute()
-        if response.data:
-            user = response.data[0]
-
-    user_email = session['user']['email']
-    profile_response = supabase.table('profiles').select('id').eq('email', user_email).execute()
-    if not profile_response.data:
-        return "User profile not found", 404
-    user_id = profile_response.data[0]['id']
-
-    # 1. Handle goal update form submission
-    if request.method == 'POST':
-        goal_id = request.form['goal_id']
-        level = int(request.form['level'])
-
-        # Insert progress with timestamp
-        supabase.table('student_goal_progress_history').insert({
-            'student_id': user_id,
-            'goal_id': goal_id,
-            'level': level,
-            'completed_at': datetime.isoformat()
-        }).execute()
-
-        # Optional: also update the latest level in `student_goal_progress`
-        supabase.table('student_goal_progress').upsert({
-            'student_id': user_id,
-            'goal_id': goal_id,
-            'completed_level': level
-        }).execute()
-
-    # 2. Fetch goals
-    goals = supabase.table('goals').select('*').execute().data
-
-    # 3. Fetch current progress
-    progress_rows = supabase.table('student_goal_progress').select('*').eq('student_id', user_id).execute().data
-    progress = {row['goal_id']: row for row in progress_rows}
-
-    # 4. Fetch progress history (fix here)
-    progress_history_result = supabase.rpc('get_student_progress_with_goal_title', {
-        'student_id': user_id
-    }).execute()
-
-    progress_history = progress_history_result.data if progress_history_result.data else []
-
-    return render_template('student/student_goals.html', user=user, goals=goals, progress=progress, progress_history=progress_history)
-
-
-@app.route('/student/mark_level_complete', methods=['POST'])
-def mark_level_complete():
-    if 'user' not in session or session['user']['role'] != 'student':
-        return redirect('/')
-    
-    user_id = session['user']['id']
-    goal_id = request.form['goal_id']
-    completed_level = int(request.form['completed_level'])
-
-    # Insert the history record
-    supabase.table('student_goal_progress_history').insert({
-        'student_id': user_id,
-        'goal_id': goal_id,
-        'level': completed_level
-    }).execute()
-
-    return redirect('/student/goals')
-
 @app.route("/student/edit_profile", methods=["GET", "POST"])
 def edit_profile():
     if "user" not in session:
@@ -352,7 +279,7 @@ def edit_profile():
     # For GET, fetch current profile data
     response = supabase.table("profiles").select("*").eq("id", user_id).execute()
     profile = response.data[0] if response.data else {}
-    return render_template("student/edit_profile.html", profile=profile)
+    return render_template("student/edit_profile.html", profile=profile, user=session_user)
 
 
 # ------------------- Teacher Section -------------------

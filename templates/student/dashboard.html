@@ -2,148 +2,132 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coding Profile Tracker</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student/dashboard.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coding Profile Tracker</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student/dashboard.css') }}">
 </head>
 
 <body>
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">CodingProfile</div>
-            <nav>
-                <ul>
-                    <li class="active"><span class="icon">🏠</span> Dashboard</li>
-                    <li><span class="icon">📋</span> <a href="/student/assignments">Assignments</a></li>
-                    <li><span class="icon">🎯</span> <a href="/student/goals">Goals</a></li>
-                    <li><span class="icon">💬</span> <a href="/student/edit_profile">Edit Profile</a></li>
-                    <li class="logout"><span class="icon">🚪</span> <a href="/logout">Logout</a></li>
-                </ul>
-            </nav>
-        </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <header>
-                <div class="welcome">
-                    <h1>Welcome, {{ user.name }}!</h1>
-                    <p>Let's check your coding progress</p>
-                </div>
-                <div class="user-avatar">
-                    <img src="{{ user.avatar_url }}" alt="User Avatar">
-                </div>
-            </header>
-
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <!-- Card 1: Current Rank -->
-                <div class="stats-card">
-                    <h3>Current Rank</h3>
-                    <p class="value">{{ leetcode_data1['ranking'] }}</p>
-                    <span class="change">↑ +5 last week</span>
-                </div>
-
-                <!-- Card 2: Problems Solved -->
-                <div class="stats-card">
-                    <h3>Problems Solved</h3>
-                    <p class="value">{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
-                    <div class="breakdown">
-                        <b><span>Easy: {{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }}</span>,
-                            <span>Medium: {{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium']
-                                }}</span>,
-                            <span>Hard: {{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard']
-                                }}</span></b>
-                    </div>
-                </div>
-
-                <!-- Card 3: Acceptance Rate -->
-                <div class="stats-card">
-                    <h3>Acceptance Rate</h3>
-                    <p class="value">{{ leetcode_data1['acceptanceRate'] }}%</p>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: {{ leetcode_data1['acceptanceRate'] }}%;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contribution and Reputation Section -->
-            <div class="bottom-section">
-                <!-- Contribution Activity -->
-                <div class="contribution-card">
-                    <h3>Contribution Activity</h3>
-                    <p>234 contributions in the last year</p>
-                    <div class="contribution-grid">
-                        <!-- Simplified grid: 5 rows, 10 columns for demo -->
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #7bc96f;"></div>
-                        <div class="grid-square" style="background-color: #239a3b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #7bc96f;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <!-- Repeat for 5 rows (50 squares total) -->
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #239a3b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #7bc96f;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #239a3b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #7bc96f;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #239a3b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #7bc96f;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #239a3b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #7bc96f;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #c6e48b;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                        <div class="grid-square" style="background-color: #ebedf0;"></div>
-                    </div>
-                </div>
-
-                <!-- Reputation & Badges -->
-                <div class="reputation-card">
-                    <h3>Reputation & Badges</h3>
-                    <p class="value">{{ leetcode_data1['reputation'] }}</p>
-                    <p>Reputation points</p>
-                    <div class="badges">
-                        <span class="badge">⭐</span>
-                        <span class="badge">🏆</span>
-                        <span class="badge">🎖️</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- Navbar with Hamburger -->
+  <nav class="navbar navbar-light bg-light d-md-none">
+    <div class="container-fluid">
+      <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+        ☰
+      </button>
+      <div class="user-avatar ms-auto">
+        <img src="{{ user.avatar_url }}" alt="User Avatar" class="rounded-circle" width="40" height="40">
+      </div>
     </div>
-</body>
+  </nav>
 
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- Sidebar -->
+      <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-white sidebar offcanvas-md offcanvas-start p-3 border-end">
+        <div class="position-sticky">
+          <div class="logo text-primary fw-bold mb-4">CodingProfile</div>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+              <a class="nav-link active" aria-current="page" href="#"><span class="icon">🏠</span> Dashboard</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a class="nav-link" href="/student/assignments"><span class="icon">📋</span> Assignments</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a class="nav-link" href="/student/edit_profile"><span class="icon">💬</span> Edit Profile</a>
+            </li>
+            <li class="nav-item mt-auto">
+              <a class="nav-link text-danger" href="/logout"><span class="icon">🚪</span> Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4 py-4">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+          <div class="welcome">
+            <h1 class="h3">Welcome, {{ user.name }}!</h1>
+            <p class="text-muted">Let's check your coding progress</p>
+          </div>
+          <div class="d-none d-md-block user-avatar">
+            <img src="{{ user.avatar_url }}" alt="User Avatar" class="rounded-circle" width="50" height="50">
+          </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="row g-4">
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card text-white bg-primary h-100">
+              <div class="card-body">
+                <h5 class="card-title">Your University Rank</h5>
+                <p class="card-text fs-2">12</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card text-white bg-success h-100">
+              <div class="card-body">
+                <h5 class="card-title">Your Leetcode Rank</h5>
+                <p class="card-text fs-2">{{ leetcode_data1['ranking'] }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card text-white bg-warning h-100">
+              <div class="card-body">
+                <h5 class="card-title">Total Problems Solved</h5>
+                <p class="card-text fs-4">{{ leetcode_data1['totalSolved'] }} / {{ leetcode_data1['totalQuestions'] }}</p>
+                <small><b>Easy:</b> {{ leetcode_data1['easySolved'] }} / {{ leetcode_data1['totalEasy'] }} <br>
+                  <b>Medium:</b> {{ leetcode_data1['mediumSolved'] }} / {{ leetcode_data1['totalMedium']
+                }} <br>
+                  <b>Hard:</b> {{ leetcode_data1['hardSolved'] }} / {{ leetcode_data1['totalHard']
+                }}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-6">
+            <div class="card text-white bg-danger h-100">
+              <div class="card-body">
+                <h5 class="card-title">Your Acceptance Rate</h5>
+                <p class="card-text fs-2">{{ leetcode_data1['acceptanceRate'] }}%</p>
+                <div class="progress">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ leetcode_data1['acceptanceRate'] }}%;" aria-valuenow="{{ leetcode_data1['acceptanceRate'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-6">
+            <div class="card bg-info text-white h-100">
+              <div class="card-body">
+                <h5 class="card-title">University Topper</h5>
+                <small>
+                  <b>Class Of</b>: 2026 <br>
+                  <b>University Rank</b>: 1 <br>
+                  <b>Leetcode Rank</b>: 5250 <br>
+                  <b>Name</b>: Nagmani Kumar
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
