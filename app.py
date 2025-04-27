@@ -146,7 +146,7 @@ def student_dashboard():
                     }
                 else:
                     leetcode_data1 = {
-                        'ranking': 'Add Leetcode Profile Link in Edit Profile',
+                        'ranking': 'Add Leetcode Profile Link in Edit Profile Section',
                         'totalSolved': 0,
                         'totalQuestions': 0,
                         'easySolved': 0,
@@ -528,8 +528,12 @@ def teacher_dashboard():
         n = len(values)
         top_10_percent = sorted_students[:max(1, n // 10)]
         bottom_10_percent = sorted_students[-max(1, n // 10):]
-        top_10_percent_avg = statistics.mean([s[metric] for s in top_10_percent if s[metric] != 'N/A']) if top_10_percent else 0
-        bottom_10_percent_avg = statistics.mean([s[metric] for s in bottom_10_percent if s[metric] != 'N/A']) if bottom_10_percent else 0
+
+        top_10_values = [s[metric] for s in top_10_percent if s[metric] != 'N/A']
+        bottom_10_values = [s[metric] for s in bottom_10_percent if s[metric] != 'N/A']
+
+        top_10_percent_avg = statistics.mean(top_10_values) if top_10_values else 0
+        bottom_10_percent_avg = statistics.mean(bottom_10_values) if bottom_10_values else 0
 
         highlights[metric] = {
             'top_3': top_3,
@@ -537,6 +541,7 @@ def teacher_dashboard():
             'top_10_percent_avg': round(top_10_percent_avg, 2),
             'bottom_10_percent_avg': round(bottom_10_percent_avg, 2)
         }
+
 
         # Histogram Data (for distribution)
         if metric in ['totalSolved', 'weightedScore', 'peakActivity']:
