@@ -162,15 +162,17 @@
               <div class="card bg-info text-white h-100">
                 <div class="card-body">
                   <h5 class="card-title">University Topper</h5>
-                  <small>
-                    <b>Class Of</b>: {{ university_topper.classOf }} <br />
-                    <b>Name</b>: {{ university_topper.name }} <br />
-                    <b>University Rank</b>: {{ university_topper.university_rank
-                    }} <br />
-                    <b>Leetcode Rank</b>: {{ university_topper.ranking }} <br />
-                    <b>Total Problems Solved</b>: {{
-                    university_topper.totalSolved }}
-                  </small>
+                  {% if university_topper %}
+                    <small>
+                      <b>Class Of</b>: {{ university_topper.classOf }} <br />
+                      <b>Name</b>: {{ university_topper.name }} <br />
+                      <b>University Rank</b>: {{ university_topper.university_rank }} <br />
+                      <b>Leetcode Rank</b>: {{ university_topper.ranking }} <br />
+                      <b>Total Problems Solved</b>: {{ university_topper.totalSolved }}
+                    </small>
+                  {% else %}
+                    <small>No topper data available at the moment.</small>
+                  {% endif %}                  
                 </div>
               </div>
             </div>

@@ -194,7 +194,7 @@ def student_dashboard():
             top_10_students = student_ranks[:10]
 
             # Find University topper (top student)
-            university_topper = student_ranks[0]
+            university_topper = student_ranks[0] if student_ranks else None
 
             return render_template('student/dashboard.html', 
                                    user=user, 
