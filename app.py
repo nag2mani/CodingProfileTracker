@@ -704,59 +704,6 @@ def delete_assignment(assignment_id):
     flash('Failed to delete assignment.', 'danger')
     return '', 400
 
-@app.route('/teacher/set_goal', methods=['GET', 'POST'])
-def set_goal():
-    if 'user' not in session or session['user']['email'].split('@')[-1] != 'sitare.org':
-        return redirect('/')
-
-    if request.method == 'POST':
-        title = request.form['title']
-        description = request.form['description']
-        level_1 = request.form['level_1']
-        level_2 = request.form['level_2']
-        level_3 = request.form['level_3']
-
-        # Insert into goals table
-        goal = supabase.table('goals').insert({
-            'title': title,
-            'description': description,
-            'level_1': level_1,
-            'level_2': level_2,
-            'level_3': level_3
-        }).execute().data[0]
-
-        # Assign to all students
-        students = supabase.table('profiles').select('id').eq('role', 'student').execute().data
-        for student in students:
-            supabase.table('student_goal_progress').insert({
-                'student_id': student['id'],
-                'goal_id': goal['id'],
-                'level_1_completed': False,
-                'level_2_completed': False,
-                'level_3_completed': False
-            }).execute()
-
-        return redirect('/teacher/set_goal')
-
-    # Fetch existing goals
-    goals = supabase.table('goals').select('*').execute().data
-
-    return render_template('teacher/set_goal.html', goals=goals)
-
-@app.route('/teacher/delete_goal/<goal_id>', methods=['POST'])
-def delete_goal(goal_id):
-    if 'user' not in session or session['user']['email'].split('@')[-1] != 'sitare.org':
-        return redirect('/')
-
-    # Delete goal progress for all students first
-    supabase.table('student_goal_progress').delete().eq('goal_id', goal_id).execute()
-
-    # Then delete the goal
-    supabase.table('goals').delete().eq('id', goal_id).execute()
-
-    return redirect('/teacher/set_goal')
-
-
 @app.route('/teacher/smarttable')
 def teacher_smarttable():
     if 'user_id' in session and session.get('dashboard') == 'teacher':
