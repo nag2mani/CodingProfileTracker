@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coding Profile Tracker</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/teacher/dashboard.css') }}"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.0.0"></script>
+    <!-- For box plot annotations -->
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">CodingProfile</div>
+        <nav>
+          <ul>
+            <li>
+              <span class="icon">🏠</span>
+              <a href="/teacher/dashboard">Dashboard</a>
+            </li>
+            <li>
+              <span class="icon">📋</span>
+              <a href="/teacher/assignments">Assignments</a>
+            </li>
+            <li>
+              <span class="icon">🧮</span>
+              <a href="/teacher/smarttable">Smart Table</a>
+            </li>
+            <li>
+              <span class="icon">👥</span>
+              <a href="/teacher/students">Students</a>
+            </li>
+            <li class="active">
+              <span class="icon">💬</span>
+              <a href="/teacher/chatbot">Chatbot</a>
+            </li>
+            <li class="logout">
+              <span class="icon">🚪</span>
+              <a href="{{ url_for('logout') }}">Logout</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <header>
+          <div class="chat-container">
+            <div class="chat-header">
+              <h2>🧠 Gemini Chatbot</h2>
+            </div>
+            <div class="chat-box" id="chat-box"></div>
+            <form id="chat-form">
+              <input
+                type="text"
+                id="user-input"
+                placeholder="Ask something..."
+                autocomplete="off"
+                required
+              />
+              <button type="submit">Send</button>
+            </form>
+          </div>
+        </header>
+      </div>
+    </div>
+
+    <script>
+      const chatBox = document.getElementById("chat-box");
+      const chatForm = document.getElementById("chat-form");
+      const userInput = document.getElementById("user-input");
+
+      // Handle form submission
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const message = userInput.value;
+
+        // Display user message
+        chatBox.innerHTML += `<div class="user-msg"><strong>You:</strong> ${message}</div>`;
+        userInput.value = ""; // Clear input field
+
+        // Send message to server and fetch reply
+        const res = await fetch("/teacher/chatbot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+
+        const data = await res.json();
+
+        // Display bot response
+        chatBox.innerHTML += `<div class="bot-msg"><strong>Gemini:</strong> ${data.reply}</div>`;
+        
+        // Scroll to the latest message
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+    </script>
+  </body>
+</html>

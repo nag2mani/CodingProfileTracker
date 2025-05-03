@@ -11,6 +11,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from collections import Counter
 import requests
+import google.generativeai as genai
 
 load_dotenv()
 app = Flask(__name__)
@@ -641,6 +642,28 @@ def teacher_smarttable():
                             total_students =total_students ,
                             avg_hard=avg_hard)
     return redirect(url_for('home'))
+
+
+
+genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+
+@app.route("/teacher/chatbot", methods=["GET", "POST"])
+def chatbot():
+    if request.method == "GET":
+        return render_template("teacher/chatbot.html")
+    else:
+        data = request.get_json()
+        user_message = data.get("message", "")
+        
+        # Make request to Gemini API for a response
+        try:
+            model = genai.GenerativeModel(model_name='gemini-1.5-flash')
+            response = model.generate_content(user_message)
+            return jsonify({"reply": response.text})  # Displaying the result field
+        except Exception as e:
+            print("Gemini API Error:", e)
+            return jsonify({"reply": "Sorry, there was an issue with the chatbot."})
+
 
 @app.route("/logout")
 def logout():

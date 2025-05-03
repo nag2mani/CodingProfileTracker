@@ -7,3 +7,4 @@ python-dotenv
 Flask-WTF
 gunicorn
 flask-session
+google-generativeai
