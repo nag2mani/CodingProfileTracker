@@ -2,6 +2,8 @@
 
 A **Flask web application** designed to analyze and monitor the coding profiles of **Sitare University** students. This tool tracks rankings, problems solved, and classifies them by difficulty level. It features intuitive dashboards for both **students** and **teachers** to visualize coding progress effectively.
 
+![image](https://github.com/user-attachments/assets/109caca3-4f23-44a3-820a-f16b238635cb)
+
 ---
 
 ## Tech Stack
@@ -32,7 +34,8 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 * Visual summaries and performance charts
 
 ![Teacher Dashboard 1](https://github.com/user-attachments/assets/3da253c9-3b23-4854-871d-8f8422769fb4)
-![Teacher Dashboard 2](https://github.com/user-attachments/assets/785d722b-292e-4bf7-bc5f-b0c144a57729)
+![Teacher Dashboard 2](https://github.com/user-attachments/assets/c2eff8c6-a046-4a99-bfbc-5827ec7046b0)
+
 
 ---
 
