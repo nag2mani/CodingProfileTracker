@@ -6,16 +6,6 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 
 ---
 
-## Tech Stack
-
-* **Backend**: Flask (Python)
-* **Authentication**: Google OAuth
-* **Database**: Supabase (PostgreSQL)
-* **Frontend**: HTML, CSS, JavaScript
-* **UI Framework**: Bootstrap
-
----
-
 ## Student Dashboard
 
 * View personal LeetCode statistics
@@ -54,6 +44,16 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 * Goal tracking and assignment breakdown
 
 ![Student Data](https://github.com/user-attachments/assets/16d0853a-6cb0-4898-a196-aa6ca6ba2797)
+
+---
+
+## Tech Stack
+
+* **Backend**: Flask (Python)
+* **Authentication**: Google OAuth
+* **Database**: Supabase (PostgreSQL)
+* **Frontend**: HTML, CSS, JavaScript
+* **UI Framework**: Bootstrap
 
 ---
 
