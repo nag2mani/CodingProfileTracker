@@ -9,6 +9,8 @@ from flask import Flask, request, redirect, url_for, session, render_template, f
 from leetcode_api import get_leetcode_data
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from collections import Counter
+import requests
 
 load_dotenv()
 app = Flask(__name__)
@@ -78,13 +80,24 @@ def auth_callback():
         username = email.split("@")[0]
         session["dashboard"] = "student" if username.startswith("su-2") else "teacher"
 
-        # We can add role based on email;
+        # Extract the year part from the email and calculate class_of
+        if username.startswith("su-"):
+            try:
+                batch_year = int(username[3:5])  # Extract '22' or '23'
+                session["class_of"] = 2000 + batch_year + 4  # e.g., 22 -> 2026
+            except ValueError:
+                session["class_of"] = None
+        else:
+            session["class_of"] = 0
+
+        # Save to Supabase
         supabase.table("profiles").upsert({
             "id": user.id,
             "email": email,
-            "name" :name,
+            "name": name,
             "avatar_url": picture,
-            "role":session["dashboard"]
+            "role": session["dashboard"],
+            "class_of": session["class_of"]
         }).execute()
 
         return jsonify({"success": True})
@@ -329,267 +342,141 @@ def edit_profile():
 # ------------------- Teacher Section -------------------
 
 
-@app.route('/teacher/dashboard', methods=['GET'])
+def get_leetcode_data(username):
+    try:
+        response = requests.get(f"https://leetcode-stats-api.herokuapp.com/{username}")
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        print(f"Error fetching data for {username}: {e}")
+    return None
+
+@app.route('/teacher/dashboard')
 def teacher_dashboard():
     if "user" not in session:
         return redirect("/")
+
     user = session['user']
+    all_students = supabase.from_('profiles').select('*').eq('role', 'student').execute().data
 
-    # Fetch all students
-    students = supabase.from_('profiles').select('*').eq('role', 'student').execute().data
+    class_wise_students = {}
+    class_wise_toppers = {}
+    overall_topper = None
+    highest_total = -1
 
-    # Pagination parameters
-    page = int(request.args.get('page', 1))
-    per_page = 10
-    start = (page - 1) * per_page
-    end = start + per_page
-
-    # Sorting and filtering parameters
-    sort_by = request.args.get('sort_by', 'totalSolved')
-    search_query = request.args.get('search', '').lower()
-
-    TOTAL_LEETCODE_USERS = 1000000
-
+    problem_bins = Counter()
+    weighted_scores = []
     leetcode_metrics = []
-    for student in students:
+
+    for student in all_students:
+        class_of = student.get('class_of', 'Unknown')
+        if class_of not in class_wise_students:
+            class_wise_students[class_of] = []
+
+        url = student.get('leetcode')
         leetcode_data = {}
-        try:
-            url = student.get('leetcode')
-            if url:
-                username = url.rstrip('/').split("/")[-1]
-                leetcode_data = get_leetcode_data(username) or {
-                    'totalSolved': 0,
-                    'totalQuestions': 0,
-                    'easySolved': 0,
-                    'totalEasy': 0,
-                    'mediumSolved': 0,
-                    'totalMedium': 0,
-                    'hardSolved': 0,
-                    'totalHard': 0,
-                    'acceptanceRate': 0,
-                    'ranking': 'N/A',
-                    'contributionPoints': 0,
-                    'submissionCalendar': {}
-                }
-            else:
-                leetcode_data = {
-                    'totalSolved': 0,
-                    'totalQuestions': 0,
-                    'easySolved': 0,
-                    'totalEasy': 0,
-                    'mediumSolved': 0,
-                    'totalMedium': 0,
-                    'hardSolved': 0,
-                    'totalHard': 0,
-                    'acceptanceRate': 0,
-                    'ranking': 'N/A',
-                    'contributionPoints': 0,
-                    'submissionCalendar': {}
-                }
+        totalSolved = 0
+        weighted_score = 0
 
-            total_solved = leetcode_data['totalSolved']
-            easy_pct = (leetcode_data['easySolved'] / leetcode_data['totalEasy'] * 100) if leetcode_data['totalEasy'] > 0 else 0
-            medium_pct = (leetcode_data['mediumSolved'] / leetcode_data['totalMedium'] * 100) if leetcode_data['totalMedium'] > 0 else 0
-            hard_pct = (leetcode_data['hardSolved'] / leetcode_data['totalHard'] * 100) if leetcode_data['totalHard'] > 0 else 0
-            acceptance_rate = leetcode_data['acceptanceRate']
-            completion_rate = (total_solved / leetcode_data['totalQuestions'] * 100) if leetcode_data['totalQuestions'] > 0 else 0
-            weighted_score = (leetcode_data['easySolved'] * 1) + (leetcode_data['mediumSolved'] * 3) + (leetcode_data['hardSolved'] * 5)
-            ranking = leetcode_data['ranking']
-            ranking_pct = (1 - (int(ranking) / TOTAL_LEETCODE_USERS)) * 100 if ranking != 'N/A' and TOTAL_LEETCODE_USERS > 0 else 0
-            contrib_per_problem = (leetcode_data['contributionPoints'] / total_solved) if total_solved > 0 else 0
+        if url:
+            username = url.rstrip('/').split("/")[-1]
+            data = get_leetcode_data(username)
+            if data:
+                leetcode_data = data
+                totalSolved = data.get('totalSolved', 0)
 
-            calendar = leetcode_data.get('submissionCalendar', {})
-            if calendar:
-                timestamps = [int(ts) for ts in calendar.keys()]
-                if timestamps:
-                    earliest = min(timestamps)
-                    latest = max(timestamps)
-                    total_days = (latest - earliest) // 86400 + 1
-                    active_days = len(calendar)
-                    consistency = (active_days / total_days) * 100 if total_days > 0 else 0
+                weighted_score = (
+                    data.get('easySolved', 0) * 1 +
+                    data.get('mediumSolved', 0) * 3 +
+                    data.get('hardSolved', 0) * 5
+                )
+
+                # Binning
+                if totalSolved <= 100:
+                    problem_bins['0-100'] += 1
+                elif totalSolved <= 200:
+                    problem_bins['101-200'] += 1
+                elif totalSolved <= 300:
+                    problem_bins['201-300'] += 1
+                elif totalSolved <= 500:
+                    problem_bins['301-500'] += 1
                 else:
-                    consistency = 0
-            else:
-                consistency = 0
+                    problem_bins['501+'] += 1
 
-            peak_activity = max(calendar.values()) if calendar else 0
+                weighted_scores.append(weighted_score)
 
-            leetcode_metrics.append({
-                'name': student['name'],
-                'totalSolved': total_solved,
-                'easy_pct': round(easy_pct, 2),
-                'medium_pct': round(medium_pct, 2),
-                'hard_pct': round(hard_pct, 2),
-                'acceptanceRate': acceptance_rate,
-                'completionRate': round(completion_rate, 2),
-                'weightedScore': weighted_score,
-                'ranking_pct': round(ranking_pct, 2) if ranking != 'N/A' else 'N/A',
-                'contribPerProblem': round(contrib_per_problem, 2),
-                'consistency': round(consistency, 2),
-                'peakActivity': peak_activity,
-                'submissionCalendar': calendar
-            })
-        except Exception as e:
-            print(f"Error fetching LeetCode data for {student['name']}: {e}")
-            leetcode_metrics.append({
-                'name': student['name'],
-                'totalSolved': 0,
-                'easy_pct': 0,
-                'medium_pct': 0,
-                'hard_pct': 0,
-                'acceptanceRate': 0,
-                'completionRate': 0,
-                'weightedScore': 0,
-                'ranking_pct': 'N/A',
-                'contribPerProblem': 0,
-                'consistency': 0,
-                'peakActivity': 0,
-                'submissionCalendar': {}
-            })
-
-    # Apply search filter
-    if search_query:
-        leetcode_metrics = [student for student in leetcode_metrics if search_query in student['name'].lower()]
-
-    # Sort by selected metric
-    sort_key_map = {
-        'totalSolved': 'totalSolved',
-        'easy_pct': 'easy_pct',
-        'medium_pct': 'medium_pct',
-        'hard_pct': 'hard_pct',
-        'acceptanceRate': 'acceptanceRate',
-        'completionRate': 'completionRate',
-        'weightedScore': 'weightedScore',
-        'ranking_pct': 'ranking_pct',
-        'contribPerProblem': 'contribPerProblem',
-        'consistency': 'consistency',
-        'peakActivity': 'peakActivity'
-    }
-    sort_key = sort_key_map.get(sort_by, 'totalSolved')
-    leetcode_metrics.sort(key=lambda x: x[sort_key] if x[sort_key] != 'N/A' else -float('inf'), reverse=True)
-
-    # Compute Summary Statistics and Highlights
-    metrics_list = [
-        'totalSolved', 'easy_pct', 'medium_pct', 'hard_pct', 'acceptanceRate',
-        'completionRate', 'weightedScore', 'ranking_pct', 'contribPerProblem',
-        'consistency', 'peakActivity'
-    ]
-    summary_stats = {}
-    highlights = {}
-
-    for metric in metrics_list:
-        values = [student[metric] for student in leetcode_metrics if student[metric] != 'N/A']
-        if not values:
-            summary_stats[metric] = {
-                'mean': 0,
-                'median': 0,
-                'std_dev': 0,
-                'min': 0,
-                'max': 0,
-                'q1': 0,
-                'q3': 0,
-                'range': 0
-            }
-            highlights[metric] = {
-                'top_3': [],
-                'bottom_3': [],
-                'top_10_percent_avg': 0,
-                'bottom_10_percent_avg': 0
-            }
-            continue
-
-        # Summary Statistics
-        mean = statistics.mean(values)
-        median = statistics.median(values)
-        std_dev = statistics.stdev(values) if len(values) > 1 else 0
-        min_val = min(values)
-        max_val = max(values)
-        q1 = statistics.quantiles(values, n=4)[0]  # 25th percentile
-        q3 = statistics.quantiles(values, n=4)[2]  # 75th percentile
-        range_val = max_val - min_val
-
-        summary_stats[metric] = {
-            'mean': round(mean, 2),
-            'median': round(median, 2),
-            'std_dev': round(std_dev, 2),
-            'min': round(min_val, 2),
-            'max': round(max_val, 2),
-            'q1': round(q1, 2),
-            'q3': round(q3, 2),
-            'range': round(range_val, 2)
+        student_info = {
+            'name': student['name'],
+            'class_of': class_of,
+            'totalSolved': totalSolved,
+            'weighted_score': weighted_score,
         }
 
-        # Highlights
-        sorted_students = sorted(leetcode_metrics, key=lambda x: x[metric] if x[metric] != 'N/A' else -float('inf'), reverse=True)
-        top_3 = [(s['name'], s[metric]) for s in sorted_students[:3] if s[metric] != 'N/A']
-        bottom_3 = [(s['name'], s[metric]) for s in sorted_students[-3:] if s[metric] != 'N/A'][::-1]
+        class_wise_students[class_of].append(student_info)
 
-        # Top 10% and Bottom 10%
-        n = len(values)
-        top_10_percent = sorted_students[:max(1, n // 10)]
-        bottom_10_percent = sorted_students[-max(1, n // 10):]
+        if class_of not in class_wise_toppers or totalSolved > class_wise_toppers[class_of]['totalSolved']:
+            class_wise_toppers[class_of] = student_info
 
-        top_10_values = [s[metric] for s in top_10_percent if s[metric] != 'N/A']
-        bottom_10_values = [s[metric] for s in bottom_10_percent if s[metric] != 'N/A']
+        if totalSolved > highest_total:
+            highest_total = totalSolved
+            overall_topper = student_info
 
-        top_10_percent_avg = statistics.mean(top_10_values) if top_10_values else 0
-        bottom_10_percent_avg = statistics.mean(bottom_10_values) if bottom_10_values else 0
+        leetcode_data['name'] = student['name']
+        leetcode_metrics.append(leetcode_data)
 
-        highlights[metric] = {
-            'top_3': top_3,
-            'bottom_3': bottom_3,
-            'top_10_percent_avg': round(top_10_percent_avg, 2),
-            'bottom_10_percent_avg': round(bottom_10_percent_avg, 2)
-        }
+        # Filter out invalid entries (e.g. students with 0 problems)
+        valid_metrics = [m for m in leetcode_metrics if m['totalSolved'] > 0]
 
+        summary_stats = {}
+        highlights = {}
 
-        # Histogram Data (for distribution)
-        if metric in ['totalSolved', 'weightedScore', 'peakActivity']:
-            bins = 10
-            hist, bin_edges = [], []
-            if values:
-                min_val, max_val = min(values), max(values)
-                bin_size = (max_val - min_val) / bins if max_val > min_val else 1
-                hist = [0] * bins
-                for val in values:
-                    bin_idx = min(int((val - min_val) / bin_size), bins - 1)
-                    hist[bin_idx] += 1
-                bin_edges = [min_val + i * bin_size for i in range(bins + 1)]
-            summary_stats[metric]['histogram'] = hist
-            summary_stats[metric]['bin_edges'] = bin_edges
+        # Define the metrics you want to show
+        metric_keys = ['totalSolved', 'easySolved', 'mediumSolved', 'hardSolved']
 
-    # For charts: Show top 10 students (or fewer if filtered)
-    chart_metrics = leetcode_metrics[:10]
+        for key in metric_keys:
+            values = [(m['name'], m[key]) for m in valid_metrics]
+            scores = [v[1] for v in values]
 
-    # For table: Apply pagination
-    total_students = len(leetcode_metrics)
-    table_metrics = leetcode_metrics[start:end]
-    total_pages = (total_students + per_page - 1) // per_page
+            if not scores:
+                continue
 
-    # For detailed graphs: List of all student names
-    all_student_names = [student['name'] for student in students]
+            mean = round(statistics.mean(scores), 1)
+            median = round(statistics.median(scores), 1)
 
-    summary_histograms = {
-    metric: {
-        'histogram': summary_stats[metric].get('histogram', []),
-        'bin_edges': summary_stats[metric].get('bin_edges', [])
-    } for metric in ['totalSolved', 'weightedScore', 'peakActivity']
-    }
-    return render_template('teacher/dashboard.html',
-                        username=session.get('username'),
-                        user=user,
-                        leetcode_metrics=chart_metrics,
-                        table_metrics=table_metrics,
-                        total_pages=total_pages,
-                        current_page=page,
-                        sort_by=sort_by,
-                        search_query=search_query,
-                        total_students=total_students,
-                        all_student_names=all_student_names,
-                        summary_stats=summary_stats,
-                        highlights=highlights,
-                        summary_histograms=summary_histograms)
+            sorted_by_score = sorted(values, key=lambda x: x[1], reverse=True)
+            top_3 = sorted_by_score[:3]
+            bottom_3 = sorted_by_score[-3:]
 
+            top_10_count = max(1, len(scores) // 10)
+            bottom_10_count = max(1, len(scores) // 10)
+
+            top_10_avg = round(statistics.mean([v[1] for v in sorted_by_score[:top_10_count]]), 1)
+            bottom_10_avg = round(statistics.mean([v[1] for v in sorted_by_score[-bottom_10_count:]]), 1)
+
+            summary_stats[key] = {
+                'mean': mean,
+                'median': median,
+            }
+
+            highlights[key] = {
+                'top_3': top_3,
+                'bottom_3': bottom_3,
+                'top_10_percent_avg': top_10_avg,
+                'bottom_10_percent_avg': bottom_10_avg
+            }
+
+    return render_template(
+        'teacher/dashboard.html',
+        user=user,
+        summary_stats=summary_stats,
+        highlights=highlights,
+        metrics=leetcode_metrics,
+        class_wise_students=class_wise_students,
+        class_wise_toppers=class_wise_toppers,
+        overall_topper=overall_topper,
+        problem_bins=dict(problem_bins),
+        weighted_scores=weighted_scores
+    )
 
 @app.route('/teacher/students')
 def teacher_students():

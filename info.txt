@@ -1,4 +1,4 @@
-API-1: https://leetcode-stats-api.herokuapp.com/nag2mani
+API: https://leetcode-stats-api.herokuapp.com/nag2mani
 Output: {
   "status": "success",
   "message": "retrieved",
