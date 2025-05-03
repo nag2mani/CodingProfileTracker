@@ -61,3 +61,4 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 
 * **Nagmani Kumar** – Team Lead, Frontend, Backend, and Database Integration
 * **Shadab Raza** – Data Processing and AI Integration
+* **Ashutosh Kumar** – Frontend and Feature Ideation
