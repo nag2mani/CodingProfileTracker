@@ -8,16 +8,17 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 
 ## Student Dashboard
 
-* View personal LeetCode statistics
-* Track problems solved by difficulty
-* Visual overview of progress
+**For New User**
+![Screenshot 2025-05-06 003246](https://github.com/user-attachments/assets/dd529060-a9bf-4046-88ad-257cf3ec5be6)
 
-**DeskTop View**
+**For Existing User**
 ![Student Dashboard](https://github.com/user-attachments/assets/181471c9-22fc-4e25-b0f7-c003c207517a)
 
 **Mobile View**  
 <p align="left">
   <img src="https://github.com/user-attachments/assets/f9d1cd57-59d8-4d7e-b00c-2a86ece4831f" width="200"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/1438e7fa-440f-4cad-a3f7-b1e96aa568c5" width="200"/>
   &nbsp;&nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/ec2ce21c-dc3c-4a6d-95b6-8ab2e010e700" width="200"/>
 </p>
