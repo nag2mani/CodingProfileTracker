@@ -29,30 +29,16 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 
 ## Teacher Dashboard
 
-### 1. Overview Dashboard
-
-* Monitor student progress at a glance
-* Visual summaries and performance charts
+**Dashboard Overview**
 
 ![Teacher Dashboard 1](https://github.com/user-attachments/assets/3da253c9-3b23-4854-871d-8f8422769fb4)
 ![Teacher Dashboard 2](https://github.com/user-attachments/assets/c2eff8c6-a046-4a99-bfbc-5827ec7046b0)
 
-
----
-
-### 2. Smart Table
-
-* Sortable and searchable student performance data
-* Filters by name, level, and assignment status
+**Smart Table**
 
 ![Smart Table](https://github.com/user-attachments/assets/6b34c649-295e-4985-8083-d602b1be677e)
 
----
-
-### 3. Individual Student Profiles
-
-* In-depth data for each student
-* Goal tracking and assignment breakdown
+**Individual Student Profiles**
 
 ![Student Data](https://github.com/user-attachments/assets/16d0853a-6cb0-4898-a196-aa6ca6ba2797)
 
