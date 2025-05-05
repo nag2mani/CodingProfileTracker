@@ -9,9 +9,11 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 ## Student Dashboard
 
 **For New User**
+
 ![Screenshot 2025-05-06 003246](https://github.com/user-attachments/assets/dd529060-a9bf-4046-88ad-257cf3ec5be6)
 
 **For Existing User**
+
 ![Student Dashboard](https://github.com/user-attachments/assets/181471c9-22fc-4e25-b0f7-c003c207517a)
 
 **Mobile View**  
