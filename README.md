@@ -17,7 +17,7 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 
 **Mobile View**  
 <p align="left">
-  <img src="https://github.com/user-attachments/assets/5313351a-fb97-4bcf-91e9-9670c3fd8f03" width="200"/>
+  <img src="https://github.com/user-attachments/assets/f9d1cd57-59d8-4d7e-b00c-2a86ece4831f" width="200"/>
   <img src="https://github.com/user-attachments/assets/ec2ce21c-dc3c-4a6d-95b6-8ab2e010e700" width="200"/>
 </p>
 
