@@ -50,12 +50,12 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 * **Authentication**: Google OAuth
 * **Database**: Supabase (PostgreSQL)
 * **Frontend**: HTML, CSS, JavaScript
-* **UI Framework**: Bootstrap
+* **UI Framework**: Bootstrap, ChartJs
 
 ---
 
 ## 👥 Team
 
 * **Nagmani Kumar** – Team Lead, Frontend, Backend, and Database Integration
-* **Shadab Raza** – Data Processing and AI Integration
-* **Ashutosh Kumar** – Frontend and Feature Ideation
+* **Shadab Raza** – Data Processing, Chatbot and LLM Integration
+* **Other Members** – Ashutosh, Divyansh, Bharat, Narendra, Sonal
