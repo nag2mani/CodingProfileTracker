@@ -189,7 +189,7 @@ def student_dashboard():
                         student_ranks.append({
                             'id': student['id'],
                             'name': student['name'],
-                            'classOf': student['classOf'],
+                            'class_of': student['class_of'],
                             'ranking': leetcode_data['ranking'],
                             'totalSolved': leetcode_data['totalSolved']
                         })

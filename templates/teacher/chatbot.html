@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coding Profile Tracker</title>
+    <title>LeetCode Analytics Assistant</title>
     <link
       rel="stylesheet"
       type="text/css"
@@ -12,94 +12,169 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.0.0"></script>
     <!-- For box plot annotations -->
-  </head>
-  <body>
-    <div class="container">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <div class="logo">CodingProfile</div>
-        <nav>
-          <ul>
-            <li>
-              <span class="icon">🏠</span>
-              <a href="/teacher/dashboard">Dashboard</a>
-            </li>
-            <li>
-              <span class="icon">📋</span>
-              <a href="/teacher/assignments">Assignments</a>
-            </li>
-            <li>
-              <span class="icon">🧮</span>
-              <a href="/teacher/smarttable">Smart Table</a>
-            </li>
-            <li>
-              <span class="icon">👥</span>
-              <a href="/teacher/students">Students</a>
-            </li>
-            <li class="active">
-              <span class="icon">💬</span>
-              <a href="/teacher/chatbot">Chatbot</a>
-            </li>
-            <li class="logout">
-              <span class="icon">🚪</span>
-              <a href="{{ url_for('logout') }}">Logout</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f5f5f5;
+      }
+      
+      .chat-container {
+          background-color: white;
+          border-radius: 10px;
+          padding: 20px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .input-container {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 20px;
+      }
+      
+      input[type="text"] {
+          flex-grow: 1;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          font-size: 16px;
+      }
+      
+      button {
+          padding: 10px 20px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 16px;
+      }
+      
+      button:hover {
+          background-color: #0056b3;
+      }
+      
+      .response-container {
+          margin-top: 20px;
+      }
+      
+      .response-text {
+          margin-bottom: 20px;
+          padding: 10px;
+          background-color: #f8f9fa;
+          border-radius: 5px;
+      }
+      
+      .chart-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 20px;
+      }
+      
+      .chart-item {
+          background: white;
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .chart-title {
+          font-weight: bold;
+          margin-bottom: 10px;
+          color: #333;
+      }
+      
+      .suggestions {
+          margin-top: 20px;
+          padding: 10px;
+          background-color: #e9ecef;
+          border-radius: 5px;
+      }
+      
+      .suggestions p {
+          margin: 5px 0;
+          color: #666;
+      }
+      
+      h1 {
+          text-align: center;
+          color: #333;
+          margin-bottom: 30px;
+      }
 
-      <!-- Main Content -->
-      <div class="main-content">
-        <header>
-          <div class="chat-container">
-            <div class="chat-header">
-              <h2>🧠 Gemini Chatbot</h2>
-            </div>
-            <div class="chat-box" id="chat-box"></div>
-            <form id="chat-form">
-              <input
-                type="text"
-                id="user-input"
-                placeholder="Ask something..."
-                autocomplete="off"
-                required
-              />
-              <button type="submit">Send</button>
-            </form>
-          </div>
-        </header>
-      </div>
+      .error-message {
+          color: #dc3545;
+          padding: 10px;
+          background-color: #f8d7da;
+          border-radius: 5px;
+          text-align: center;
+      }
+  </style>
+  </head>
+
+  <body>
+    <h1>LeetCode Analytics Assistant</h1>
+    
+    <div class="chat-container">
+        <div class="input-container">
+            <input type="text" id="queryInput" placeholder="Ask about student performance...">
+            <button onclick="sendQuery()">Analyze</button>
+        </div>
+        
+        <div class="suggestions">
+            <p>Example queries:</p>
+            <p>- "Who has solved the most problems?"</p>
+            <p>- "Show me the difficulty breakdown for all students"</p>
+            <p>- "How active was Alice last month?"</p>
+            <p>- "Compare student rankings"</p>
+            <p>- "Show me acceptance rates"</p>
+        </div>
+        
+        <div class="response-container">
+            <div class="response-text" id="responseText"></div>
+            <div class="chart-grid" id="chartGrid"></div>
+        </div>
     </div>
 
     <script>
-      const chatBox = document.getElementById("chat-box");
-      const chatForm = document.getElementById("chat-form");
-      const userInput = document.getElementById("user-input");
+        function sendQuery() {
+            const query = document.getElementById('queryInput').value;
+            if (!query) return;
 
-      // Handle form submission
-      chatForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const message = userInput.value;
+            document.getElementById('responseText').textContent = 'Analyzing...';
+            document.getElementById('chartGrid').innerHTML = ''; // Clear previous charts
 
-        // Display user message
-        chatBox.innerHTML += `<div class="user-msg"><strong>You:</strong> ${message}</div>`;
-        userInput.value = ""; // Clear input field
+            fetch('/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query }),
+            })
+            .then(response => response.text()) // Expecting HTML as response
+            .then(html => {
+                // Clean up the received HTML by removing unwanted newlines and extra spaces
+                let cleanedHtml = html.replace(/\n+/g, ' ').trim(); // Replace multiple newlines with a single one
 
-        // Send message to server and fetch reply
-        const res = await fetch("/teacher/chatbot", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
-        });
+                // Insert the cleaned HTML just below the chat input box
+                const responseContainer = document.createElement('div');
+                responseContainer.innerHTML = cleanedHtml; // Use innerHTML to insert the cleaned content
+                document.querySelector('.response-container').appendChild(responseContainer);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('responseText').textContent = 'An error occurred while processing your request. Please try again.';
+                document.getElementById('chartGrid').innerHTML = '<div class="error-message">Failed to generate visualizations</div>';
+            });
 
-        const data = await res.json();
-
-        // Display bot response
-        chatBox.innerHTML += `<div class="bot-msg"><strong>Gemini:</strong> ${data.reply}</div>`;
-        
-        // Scroll to the latest message
-        chatBox.scrollTop = chatBox.scrollHeight;
-      });
+            document.getElementById('queryInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendQuery();
+                }
+            });
+        }
     </script>
-  </body>
+</body>
 </html>

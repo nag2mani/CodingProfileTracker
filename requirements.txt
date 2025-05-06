@@ -8,3 +8,6 @@ Flask-WTF
 gunicorn
 flask-session
 google-generativeai
+matplotlib
+seaborn
+pandas
