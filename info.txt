@@ -23,20 +23,3 @@ Output: {
     "1710028800": 15,
   }
 }
-
-
-Task To Complete:
-
-Student;
-1. Add Goals with Level on dashboard (how much question need to cross the level 30, 50, 20).
-
-Teacher;
-
-1. Total Problems Solved (fix the range).
-2. make 3 graphs of e,m,h
-3. remove peak sub.
-4. Performance Highlights info icon.
-5. Download
-6. add leetcode rank in smart table.
-7. put everything on smart table.
-

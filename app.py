@@ -1,17 +1,16 @@
 import os
 import uuid
+import requests
 import statistics
-from flask_wtf import CSRFProtect
-from flask_session import Session
 from datetime import datetime
-from supabase import create_client, Client
-from flask import Flask, request, redirect, url_for, session, render_template, flash, jsonify
-from leetcode_api import get_leetcode_data
-from supabase import create_client, Client
 from dotenv import load_dotenv
 from collections import Counter
-import requests
+from flask_session import Session
+from flask_wtf import CSRFProtect
 import google.generativeai as genai
+from supabase import create_client, Client
+from leetcode_api import get_leetcode_data
+from flask import Flask, request, redirect, url_for, session, render_template, flash, jsonify
 
 load_dotenv()
 app = Flask(__name__)
