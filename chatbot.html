@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Analytics Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .chat-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .response-container {
+            margin-top: 20px;
+        }
+        
+        .response-text {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .chart-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .suggestions {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .suggestions p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 10px;
+            background-color: #f8d7da;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>LeetCode Analytics Assistant</h1>
+    
+    <div class="chat-container">
+        <div class="input-container">
+            <input type="text" id="queryInput" placeholder="Ask about student performance...">
+            <button onclick="sendQuery()">Analyze</button>
+        </div>
+        
+        <div class="suggestions">
+            <p>Example queries:</p>
+            <p>- "Who has solved the most problems?"</p>
+            <p>- "Show me the difficulty breakdown for all students"</p>
+            <p>- "How active was Alice last month?"</p>
+            <p>- "Compare student rankings"</p>
+            <p>- "Show me acceptance rates"</p>
+        </div>
+        
+        <div class="response-container">
+            <div class="response-text" id="responseText"></div>
+            <div class="chart-grid" id="chartGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        function sendQuery() {
+            const query = document.getElementById('queryInput').value;
+            if (!query) return;
+
+            document.getElementById('responseText').textContent = 'Analyzing...';
+            document.getElementById('chartGrid').innerHTML = ''; // Clear previous charts
+
+            fetch('/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query }),
+            })
+            .then(response => response.text()) // Expecting HTML as response
+            .then(html => {
+                // Clean up the received HTML by removing unwanted newlines and extra spaces
+                let cleanedHtml = html.replace(/\n+/g, ' ').trim(); // Replace multiple newlines with a single one
+
+                // Insert the cleaned HTML just below the chat input box
+                const responseContainer = document.createElement('div');
+                responseContainer.innerHTML = cleanedHtml; // Use innerHTML to insert the cleaned content
+                document.querySelector('.response-container').appendChild(responseContainer);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('responseText').textContent = 'An error occurred while processing your request. Please try again.';
+                document.getElementById('chartGrid').innerHTML = '<div class="error-message">Failed to generate visualizations</div>';
+            });
+
+            document.getElementById('queryInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendQuery();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
