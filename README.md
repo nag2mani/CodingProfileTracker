@@ -52,9 +52,8 @@ A **Flask web application** designed to analyze and monitor the coding profiles 
 * **Frontend**: HTML, CSS, JavaScript
 * **UI Framework**: Bootstrap, ChartJs
 
----
-
 **Database Schema**
+
 ![image](https://github.com/user-attachments/assets/ecf1e12e-7065-4420-bf73-26daa4d818af)
 
 ---
