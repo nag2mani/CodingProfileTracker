@@ -7,10 +7,9 @@ from dotenv import load_dotenv
 from collections import Counter
 from flask_session import Session
 from flask_wtf import CSRFProtect
-import google.generativeai as genai
+from flask import Flask, request, redirect, url_for, session, render_template, flash, jsonify
 from supabase import create_client, Client
 from leetcode_api import get_leetcode_data
-from flask import Flask, request, redirect, url_for, session, render_template, flash, jsonify
 
 load_dotenv()
 app = Flask(__name__)
