@@ -1,6 +1,6 @@
 Flask
 Flask-SQLAlchemy
-psycopg2
+psycopg2-binary
 requests
 supabase
 python-dotenv

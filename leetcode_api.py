@@ -17,7 +17,7 @@ def get_leetcode_data(username):
     url = f"https://leetcode-stats-api.herokuapp.com/{username}"
     
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=8)
         if response.status_code == 200:
             data = response.json()
 

@@ -23,7 +23,7 @@ import pandas as pd
 import io
 import base64
 import os
-from google import genai
+import google.generativeai as genai
 import re
 from enum import Enum
 
@@ -33,9 +33,17 @@ from enum import Enum
 
 app = Flask(__name__)
 
-# Google Gemini API key for LLM-powered query handling (set via environment)
+# Google Gemini API key for LLM-powered query handling
 gemini_api_key = os.environ.get("GOOGLE_API_KEY")
-client = genai.Client(api_key=gemini_api_key)
+
+if not gemini_api_key:
+    raise ValueError("GOOGLE_API_KEY environment variable is not set")
+
+# Configure Gemini
+genai.configure(api_key=gemini_api_key)
+
+# Create reusable model client
+client = genai.GenerativeModel("gemini-1.5-flash")
 
 # Use non-interactive backend for matplotlib (required when no display is available)
 plt.switch_backend('Agg')

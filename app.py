@@ -2,6 +2,7 @@ import os
 import uuid
 import requests
 import statistics
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
 from datetime import datetime
 from dotenv import load_dotenv
 from collections import Counter
@@ -10,6 +11,7 @@ from flask_wtf import CSRFProtect
 from flask import Flask, request, redirect, url_for, session, render_template, flash, jsonify
 from supabase import create_client, Client
 from leetcode_api import get_leetcode_data
+import google.generativeai as genai
 
 load_dotenv()
 app = Flask(__name__)
@@ -89,15 +91,31 @@ def auth_callback():
         else:
             session["class_of"] = 0
 
-        # Save to Supabase
-        supabase.table("profiles").upsert({
-            "id": user.id,
-            "email": email,
-            "name": name,
-            "avatar_url": picture,
-            "role": session["dashboard"],
-            "class_of": session["class_of"]
-        }).execute()
+        # Save to Supabase (for both students and teachers)
+        # Do not upsert with on_conflict=email when id is in the payload: updating
+        # profiles.id would violate assignments.created_by_fkey if this profile
+        # created any assignments. So: update existing profile by email without
+        # changing id, or insert new profile with user.id.
+        existing = supabase.table("profiles").select("id").eq("email", email).execute()
+        if existing.data and len(existing.data) > 0:
+            profile_id = existing.data[0]["id"]
+            supabase.table("profiles").update({
+                "name": name,
+                "avatar_url": picture,
+                "role": session["dashboard"],
+                "class_of": session["class_of"]
+            }).eq("id", profile_id).execute()
+            session["user_id"] = profile_id
+        else:
+            supabase.table("profiles").insert({
+                "id": user.id,
+                "email": email,
+                "name": name,
+                "avatar_url": picture,
+                "role": session["dashboard"],
+                "class_of": session["class_of"]
+            }).execute()
+            session["user_id"] = user.id
 
         return jsonify({"success": True})
 
@@ -129,91 +147,121 @@ def route_dashboard():
 def student_dashboard():
     if 'user' in session:
         user = session['user']
-        user_id = session["user_id"]
+        user_id = session.get("user_id")
         
         # Fetch the current student data
         response = supabase.table("profiles").select("*").eq('id', user_id).execute()
-        if response.data:
-            user = response.data[0]
-            leetcode_data1 = {}
+        if not response.data:
+            # Stale or mismatched session: try to find profile by email (e.g. after login fix)
+            email = (session.get("user") or {}).get("email")
+            if email:
+                by_email = supabase.table("profiles").select("*").eq("email", email).execute()
+                if by_email.data:
+                    session["user_id"] = by_email.data[0]["id"]
+                    user_id = session["user_id"]
+                    response = by_email
+        if not response.data:
+            # No profile for this user — break redirect loop by clearing session
+            session.clear()
+            flash("Profile not found. Please log in again.", "warning")
+            return redirect(url_for("home"))
 
+        user = response.data[0]
+        leetcode_data1 = {}
+
+        try:
+            # Get Leetcode data for current student
+            url = user.get('leetcode')
+            if url:
+                username = url.rstrip('/').split("/")[-1]
+                leetcode_data1 = get_leetcode_data(username) or {
+                    'ranking': 'N/A',
+                    'totalSolved': 0,
+                    'totalQuestions': 0,
+                    'easySolved': 0,
+                    'totalEasy': 0,
+                    'mediumSolved': 0,
+                    'totalMedium': 0,
+                    'hardSolved': 0,
+                    'totalHard': 0,
+                    'acceptanceRate': 0,
+                    'contributionPoints': 0,
+                    'reputation': 0,
+                }
+            else:
+                leetcode_data1 = {
+                    'ranking': 'Add Leetcode Profile Link in Edit Profile Section',
+                    'totalSolved': 0,
+                    'totalQuestions': 0,
+                    'easySolved': 0,
+                    'totalEasy': 0,
+                    'mediumSolved': 0,
+                    'totalMedium': 0,
+                    'hardSolved': 0,
+                    'totalHard': 0,
+                    'acceptanceRate': 0,
+                    'contributionPoints': 0,
+                    'reputation': 0,
+                }
+        except Exception as e:
+            print("Error:", e)
+
+        # Fetch all students' LeetCode data for university rank calculation (parallel to avoid blocking)
+        all_students = supabase.table("profiles").select("*").execute().data
+        student_ranks = []
+
+        def fetch_rank(student):
+            leetcode_url = student.get('leetcode')
+            if not leetcode_url:
+                return None
+            username = leetcode_url.rstrip('/').split("/")[-1]
+            leetcode_data = get_leetcode_data(username)
+            if leetcode_data:
+                return {
+                    'id': student['id'],
+                    'name': student['name'],
+                    'class_of': student['class_of'],
+                    'ranking': leetcode_data['ranking'],
+                    'totalSolved': leetcode_data['totalSolved']
+                }
+            return None
+
+        max_workers = min(32, (len(all_students) or 1) + 4)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {executor.submit(fetch_rank, s): s for s in all_students}
             try:
-                # Get Leetcode data for current student
-                url = user.get('leetcode')
-                if url:
-                    username = url.rstrip('/').split("/")[-1]
-                    leetcode_data1 = get_leetcode_data(username) or {
-                        'ranking': 'N/A',
-                        'totalSolved': 0,
-                        'totalQuestions': 0,
-                        'easySolved': 0,
-                        'totalEasy': 0,
-                        'mediumSolved': 0,
-                        'totalMedium': 0,
-                        'hardSolved': 0,
-                        'totalHard': 0,
-                        'acceptanceRate': 0,
-                        'contributionPoints': 0,
-                        'reputation': 0,
-                    }
-                else:
-                    leetcode_data1 = {
-                        'ranking': 'Add Leetcode Profile Link in Edit Profile Section',
-                        'totalSolved': 0,
-                        'totalQuestions': 0,
-                        'easySolved': 0,
-                        'totalEasy': 0,
-                        'mediumSolved': 0,
-                        'totalMedium': 0,
-                        'hardSolved': 0,
-                        'totalHard': 0,
-                        'acceptanceRate': 0,
-                        'contributionPoints': 0,
-                        'reputation': 0,
-                    }
-            except Exception as e:
-                print("Error:", e)
+                for future in as_completed(futures, timeout=15):
+                    try:
+                        row = future.result()
+                        if row:
+                            student_ranks.append(row)
+                    except Exception as e:
+                        print("Error fetching student rank:", e)
+            except FuturesTimeoutError:
+                print("Timeout fetching some LeetCode ranks; showing partial results")
 
-            # Fetch all students' LeetCode data for university rank calculation
-            all_students = supabase.table("profiles").select("*").execute().data
-            student_ranks = []
+        # Sort students by Leetcode ranking (ascending, best rank first)
+        student_ranks.sort(key=lambda x: x['ranking'])
 
-            for student in all_students:
-                leetcode_url = student.get('leetcode')
-                if leetcode_url:
-                    username = leetcode_url.rstrip('/').split("/")[-1]
-                    leetcode_data = get_leetcode_data(username)
-                    if leetcode_data:
-                        student_ranks.append({
-                            'id': student['id'],
-                            'name': student['name'],
-                            'class_of': student['class_of'],
-                            'ranking': leetcode_data['ranking'],
-                            'totalSolved': leetcode_data['totalSolved']
-                        })
+        # Assign university ranks
+        for idx, student in enumerate(student_ranks):
+            student['university_rank'] = idx + 1
 
-            # Sort students by Leetcode ranking (ascending, best rank first)
-            student_ranks.sort(key=lambda x: x['ranking'])
+        # Find the logged-in user's rank
+        user_rank = next((student['university_rank'] for student in student_ranks if student['id'] == user_id), 'N/A')
 
-            # Assign university ranks
-            for idx, student in enumerate(student_ranks):
-                student['university_rank'] = idx + 1
+        # Get top 10 students
+        top_10_students = student_ranks[:10]
 
-            # Find the logged-in user's rank
-            user_rank = next((student['university_rank'] for student in student_ranks if student['id'] == user_id), 'N/A')
+        # Find University topper (top student)
+        university_topper = student_ranks[0] if student_ranks else None
 
-            # Get top 10 students
-            top_10_students = student_ranks[:10]
-
-            # Find University topper (top student)
-            university_topper = student_ranks[0] if student_ranks else None
-
-            return render_template('student/dashboard.html', 
-                                   user=user, 
-                                   leetcode_data1=leetcode_data1,
-                                   user_rank=user_rank,  # Pass user's rank to template
-                                   university_topper=university_topper,
-                                   top_10_students=top_10_students)
+        return render_template('student/dashboard.html', 
+                               user=user, 
+                               leetcode_data1=leetcode_data1,
+                               user_rank=user_rank,  # Pass user's rank to template
+                               university_topper=university_topper,
+                               top_10_students=top_10_students)
 
     flash('Please log in to access the dashboard.', 'warning')
     return redirect(url_for('home'))
@@ -641,26 +689,34 @@ def teacher_smarttable():
                             avg_hard=avg_hard)
     return redirect(url_for('home'))
 
-
-
+# Configure Gemini API
 genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+
+# Create model once (better performance)
+model = genai.GenerativeModel("gemini-1.5-flash")
+
 
 @app.route("/teacher/chatbot", methods=["GET", "POST"])
 def chatbot():
     if request.method == "GET":
         return render_template("teacher/chatbot.html")
-    else:
-        data = request.get_json()
-        user_message = data.get("message", "")
-        
-        # Make request to Gemini API for a response
-        try:
-            model = genai.GenerativeModel(model_name='gemini-1.5-flash')
-            response = model.generate_content(user_message)
-            return jsonify({"reply": response.text})  # Displaying the result field
-        except Exception as e:
-            print("Gemini API Error:", e)
-            return jsonify({"reply": "Sorry, there was an issue with the chatbot."})
+
+    data = request.get_json()
+    user_message = data.get("message", "").strip()
+
+    if not user_message:
+        return jsonify({"reply": "Please enter a message."}), 400
+
+    try:
+        response = model.generate_content(user_message)
+
+        reply_text = response.text if response and response.text else "I couldn't generate a response."
+
+        return jsonify({"reply": reply_text})
+
+    except Exception as e:
+        print("Gemini API Error:", e)
+        return jsonify({"reply": "Sorry, there was an issue with the chatbot."}), 500
 
 
 @app.route("/logout")
